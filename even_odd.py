@@ -1,0 +1,6 @@
+a = list(range(11))
+print(a[::2])
+print(a[1::2])
+print(3 not in a[1::2])
+print(a[1:4:2])
+print(a[-2::-2])
