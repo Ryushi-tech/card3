@@ -14,4 +14,4 @@ if n > 1:
 if pf == {}:
     print(1)
 else:
-    print(sum(pf.values()))
+    print(len(pf)+1)
