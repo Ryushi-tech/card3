@@ -1,26 +1,27 @@
-import math
-m, n = map(int, input().split())
-lis = [input() for _ in range(m)]
+h, w = map(int, input().split())
+A = [input() for _ in range(h)]
 
-a = [lis[0][i] for i in range(m)]
-print(a)
+Q = []
+V = [[0] * w for _ in range(h)]
+D = [[0] * w for _ in range(h)]
 
-b = [lis[j][0] for j in range(n)]
-print(b)
+for i in range(h):
+    for j in range(w):
+        if A[i][j] == "#":
+            Q.append([i, j, 0])
+            V[i][j] = 1
+            D[i][j] = 0
 
-c=[]
-for i in range(m):
-    for j in range(n):
-        if lis[j][i] == "#":
-            c.append([i, j])
+st = 0
+while st < len(Q):
+    for i in [[-1,0], [1,0], [0,-1], [0,1]]:
+        x = Q[st][0] + i[0]
+        y = Q[st][1] + i[1]
+        print(x,y)
+        if 0 <= x < h and 0 <= y < w and V[x][y] == 0:
+            V[x][y] = 1
+            Q.append([x,y,Q[st][2]+1])
+            D[x][y] = Q[st][2] + 1
+    st += 1
 
-d = range(len(c))
-e = []
-for i in d:
-    for j in d:
-        if i==j:
-            break
-        else:
-            e.append(((c[i][0] - c[j][0])**2+(c[i][1] - c[j][1])**2)**0.5)
-f = math.ceil(min(e))
-print(f)
+print(max([max(i) for i in D]))
