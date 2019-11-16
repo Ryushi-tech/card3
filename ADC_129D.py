@@ -29,4 +29,3 @@ for i in range(h):
         ans = max(ans, area[i][j])
 
 print(ans)
-

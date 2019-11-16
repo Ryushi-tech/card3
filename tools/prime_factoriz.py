@@ -1,5 +1,5 @@
 pf = {}
-m = 341555136
+m = 1999998
 for i in range(2, int(m**0.5)+1):
     while m % i == 0:
         print(m)
