@@ -1,4 +1,9 @@
-n = int(input())
+import itertools
+
+n,k = map(int, input().split())
 lis = list(map(int,input().split()))
-m,k,q = map(int, input().split())
-a = [int(input()) for _ in range(q)]
+
+l_p = list(itertools.product(lis, lis))
+
+for i in l_p:
+    print(i[0]*i[1])
