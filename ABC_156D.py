@@ -1,22 +1,15 @@
+from functools import reduce
 
 def main():
-    m, a, b = map(int,input().split())
-    base = pow(2, m, 10**9+7)
-    print(base)
+    n, a, b = map(int,input().split())
     mod = 10 ** 9 + 7
-
-    fact = [1]
-    fact_inv = [0] * (m + 4)
-    for i in range(m + 3):
-        fact.append(fact[-1] * (i + 1) % mod)
-
-    fact_inv[-1] = pow(fact[-1], mod - 2, mod)
-    for i in range(m + 2, -1, -1):
-        fact_inv[i] = fact_inv[i + 1] * (i + 1) % mod
-
-    def mod_comb_k(n, k, mod):
-        return fact[n] * fact_inv[k] % mod * fact_inv[n - k] % mod
-    print(mod_comb_k(m,a,mod))
+    def f(k):
+        num = reduce(lambda x,y: x * y % mod, range(n, n-k, -1))
+        den = reduce(lambda x,y: x * y % mod, range(1, k+1))
+        return num * pow(den, mod-2, mod) % mod
+    ans = pow(2,n,mod) - f(a) - f(b) - 1
+    ans %= mod
+    print(ans)
 
 if __name__ == '__main__':
     main()
