@@ -12,8 +12,8 @@ def main():
             if l[j] != str(k):
                 break
         else:
-             print(i)
-             exit()
+            print(i)
+            exit()
     print(-1)
 
 if __name__ == '__main__':
