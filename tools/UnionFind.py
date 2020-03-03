@@ -1,4 +1,7 @@
-N, Q = map(int, input().split())
+import sys
+readline = sys.stdin.buffer.readline
+
+N, Q = map(int, readline().split())
 par = [i for i in range(N + 1)]
 
 
@@ -23,7 +26,7 @@ def unite(x, y):
 
 
 for i in range(Q):
-    p, a, b = map(int, input().split())
+    p, a, b = map(int, readline().split())
     if p == 0:
         unite(a, b)
     else:
