@@ -14,7 +14,6 @@ def main():
         res = inf
         for S in [s[b - 1], s[b]]:
             for T in [t[d - 1], t[d]]:
-                print(S,T)
                 d1, d2 = abs(S - x) + abs(T - S), abs(T - x) + abs(S - T)
                 res = min(res, d1, d2)
         print(res)
