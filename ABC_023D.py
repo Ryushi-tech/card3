@@ -1,5 +1,7 @@
-# ref https://atcoder.jp/contests/abc023/submissions/6635676
+# ref. https://atcoder.jp/contests/abc023/submissions/7901104
+
 import sys
+import numpy as np
 input = sys.stdin.readline
 
 n = int(input())
@@ -9,30 +11,22 @@ s = [0] * n
 for i in range(n):
     h[i], s[i] = map(int, input().split())
 
-right = 10 ** 2
+h = np.array(h, np.int64)
+s = np.array(s, np.int64)
+
+right = 10 ** 14
 left = 0
 
+
+def check(x):
+    t = (x-h)//s
+    t.sort()
+    return (t >= np.arange(n)).all()
+
+
 while left + 1 < right:
-    mid = (left + right) // 2
-    sim = [0] * n
-    judge = True
-    for i in range(n):
-        if mid < h[i]:
-            judge = False
-            break
-        elif (mid - h[i]) // s[i] >= n:
-            continue
-        sim[(mid - h[i]) // s[i]] += 1
-    p = 0
-    if not judge:
-        left = mid
-        continue
-    for i in range(n):
-        p += sim[i]
-        if p > i + 1:
-            judge = False
-            break
-    if judge:
+    mid = (left + right)//2
+    if check(mid):
         right = mid
     else:
         left = mid
