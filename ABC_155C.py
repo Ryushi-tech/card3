@@ -1,13 +1,14 @@
-q = int(input())
-a = [input() for _ in range(q)]
-dic = {}
+import collections
+import sys
+input = sys.stdin.readline
 
-for i in a:
-    if i in dic:
-        dic[i] += 1
-    else:
-        dic[i] = 1
-keys = [k for k, v in dic.items() if v == max(dic.values())]
+q = int(input())
+a = [input().rstrip() for _ in range(q)]
+
+dic = collections.Counter(a)
+
+ma = max(dic.values())
+keys = [k for k, v in dic.items() if v == ma]
 keys_s = sorted(keys)
 for i in keys_s:
     print(i)
