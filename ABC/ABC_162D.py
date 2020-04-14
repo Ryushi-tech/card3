@@ -3,16 +3,25 @@ input = sys.stdin.readline
 
 def main():
     n = int(input())
-    lis = list(map(int, input().split()))
+    s = input()
+    R = 0
+    G = 0
+    B = 0
 
-    n, m = map(int, input().split())
-    lis = [int(input()) for _ in range(n)]
-
-    n, m = map(int, input().split())
-    h = [0] * n
-    s = [0] * n
     for i in range(n):
-        h[i], s[i] = map(int, input().split())
+        if s[i] == "R":
+            R += 1
+        elif s[i] == "G":
+            G += 1
+        else:
+            B += 1
 
+    res = R*G*B
+    for i in range(n - 2):
+        for j in range(i + 1, i + 1 + (n - 1 - i) // 2):
+            k = j + (j - i)
+            if s[i] != s[j] != s[k] != s[i]:
+                res -= 1
+    print(res)
 if __name__ == '__main__':
     main()

@@ -1,18 +1,14 @@
-import sys
-input = sys.stdin.readline
+n = int(input())
+res = 0
 
-def main():
-    n = int(input())
-    lis = list(map(int, input().split()))
+def gcd(a, b):
+    while b:
+        a, b = b, a % b
+    return a
 
-    n, m = map(int, input().split())
-    lis = [int(input()) for _ in range(n)]
-
-    n, m = map(int, input().split())
-    h = [0] * n
-    s = [0] * n
-    for i in range(n):
-        h[i], s[i] = map(int, input().split())
-
-if __name__ == '__main__':
-    main()
+for i in range(1, n+1):
+    for j in range(1, n+1):
+        for k in range(1, n+1):
+            l = gcd(i,j)
+            res += gcd(k, l)
+print(res)
