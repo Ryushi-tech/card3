@@ -15,4 +15,4 @@ def solve(S,P):
     counter = Counter(T)
     return sum(x * (x - 1) // 2 for x in counter.values()) + counter[0]
 
-print(solve(S,P))
+print(solve(S,P)

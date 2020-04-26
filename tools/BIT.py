@@ -1,5 +1,5 @@
 # n: クエリ処理する列のサイズ
-
+n = 10
 data = [0] * (n + 1)
 
 
@@ -30,3 +30,8 @@ def lower_bound(x):
             i += k
         k >>= 1
     return i + 1
+
+res=[]
+for i in range(n):
+    res.append(get(i))
+print(res)
