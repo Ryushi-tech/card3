@@ -2,6 +2,7 @@ from collections import Counter
 S = list(map(int, input()))
 P = 2019
 
+
 def solve(S,P):
     S = S[::-1]
     T = [0] * len(S)
@@ -15,4 +16,5 @@ def solve(S,P):
     counter = Counter(T)
     return sum(x * (x - 1) // 2 for x in counter.values()) + counter[0]
 
-print(solve(S,P)
+
+print(solve(S,P))
