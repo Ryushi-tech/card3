@@ -1,6 +1,6 @@
 import sys
 import numpy as np
-from scipy.sparse.csgraph import shortest_path
+from scipy.sparse.csgraph import floyd_warshall, shortest_path
 
 input = sys.stdin.readline
 
