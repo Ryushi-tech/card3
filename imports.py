@@ -7,6 +7,7 @@ from functools import reduce
 import bisect
 import heapq
 import math
+from math import hypot
 import numpy as np
 from scipy.sparse import csr_matrix
 from scipy.sparse.csgraph import floyd_warshall, shortest_path
