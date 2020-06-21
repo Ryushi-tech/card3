@@ -1,8 +1,4 @@
-# ref http://tkori.hateblo.jp/entry/2015/12/16/180521
-
 import numpy as np
-import sys
-input = sys.stdin.read
 
 N = 10 ** 6
 Nsq = 10 ** 3
@@ -34,22 +30,12 @@ def nCr(a, b):
     return comb
 
 
-def alloc(x, y):
-    if x < 0 or y < 0 or x * y < D + L:
-        return 0
-    else:
-        return nCr(x * y, D) * nCr(x * y - D, L)
+n, m = map(int, input().split())
 
+ans = pow(m, n, mod)
+sign = m & 1
 
-R, C, X, Y, D, L = map(int, input().split())
-
-wa = (R - X + 1) * (C - Y + 1)
-
-dla = alloc(X, Y)
-dla -= alloc(X - 1, Y) * 2 + alloc(X, Y - 1) * 2
-dla += alloc(X - 1, Y - 1) * 4 + alloc(X, Y - 2) + alloc(X - 2, Y)
-dla -= alloc(X - 1, Y - 2) * 2 + alloc(X - 2, Y - 1) * 2
-dla += alloc(X - 2, Y - 2)
-dla %= mod
-
-print(wa * dla % mod)
+for i in range(m, 1, -1):
+    ans -= (-1)**(i + sign) * nCr(m, i - 1) * pow(i - 1, n, mod)
+    ans %= mod
+print(ans)
