@@ -1,17 +1,21 @@
 from card3.void.stop_watch import stop_watch
 
 @stop_watch
-def main():
-    n = int(input())
-    for _ in range(n):
-        a, b = map(int, input().split())
-        ref = a * b
-        s = int(ref ** 0.5)
-        ans = 2 * s - 1
-        if s * (s + 1) >= ref:
-            ans -= 1
-        if s * s == a * b and a != b:
-            ans -= 1
-        print(ans)
-if __name__ == '__main__':
-    main()
+def solve():
+    t = int(input())
+    for _ in range(t):
+        n = int(input())
+        s = list(map(int, input().split()))
+        chk = [0] * n
+        for i, x in enumerate(s):
+            if i + 1 == x:
+                chk[i] = 1
+        cnt = 0
+        chk.append(1)
+        for i in range(n):
+            if chk[i] == 0 and chk[i + 1] == 1:
+                cnt += 1
+        print(min(cnt, 2))
+
+solve()
+
