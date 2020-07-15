@@ -2,7 +2,7 @@ from card3.void.stop_watch import stop_watch
 
 @stop_watch
 def solve():
-    import heapq
+    from collections import deque
     n = int(input())
     g = [[] for _ in range(n)]
     for _ in range(n - 1):
@@ -10,25 +10,22 @@ def solve():
         a, b = a - 1, b - 1
         g[a].append((b, c))
         g[b].append((a, c))
-    inf = 10**14
-    dist = [inf] * n
+    dist = [0] * n
 
-    def dijkstra(s):
-        q = []
-        dist[s] = 0
-        heapq.heappush(q, [0, s])
+    def dfs(v, p=-1, d=0):
+        q = deque()
+        q.append((v, p, d))
         while q:
-            p, v = heapq.heappop(q)
-            if dist[v] < p:
-                continue
+            v, p, d = q.pop()
+            dist[v] = d
             for i, x in g[v]:
-                if dist[i] > dist[v] + x:
-                    dist[i] = dist[v] + x
-                    heapq.heappush(q, [dist[i], i])
+                if i == p:
+                    continue
+                q.append((i, v, d + x))
 
     m, k = map(int, input().split())
     k = k - 1
-    dijkstra(k)
+    dfs(k)
     for _ in range(m):
         e, f = map(int, input().split())
         res = dist[e - 1] + dist[f - 1]
