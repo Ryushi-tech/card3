@@ -1,29 +1,36 @@
 from collections import deque
 
 
-def bfs(sx, sy):
-    queue = deque([[sx, sy]])
-    visit[sx][sy] = 0
+def bfs(k, l):
+    queue = deque([[k, l]])
+    visit[k][l] = 0
     while queue:
         x, y = queue.popleft()
         if [x, y] == [gx, gy]:
             return visit[x][y]
-        for i in range(4):
-            nx, ny = x + dx[i], y + dy[i]
+        for dx, dy in move:
+            nx, ny = x + dx, y + dy
+            if not -1 < nx < h or not -1 < ny < w:
+                continue
             if graph[nx][ny] == "." and visit[nx][ny] == -1:
                 visit[nx][ny] = visit[x][y] + 1
                 queue.append([nx, ny])
+    return -1
 
 
-h, w = map(int, input().split())
-sx, sy = map(int, input().split())
-gx, gy = map(int, input().split())
-graph = [list(input()) for _ in range(h)]
-
-sx, sy, gx, gy = sx-1, sy-1, gx-1, gy-1
+h, w = 411, 411
+ofs = h // 2
+sx, sy = 0, 0
+n, gx, gy = map(int, input().split())
+sx, sy, gx, gy = sx + ofs, sy + ofs, gx + ofs, gy + ofs
+graph = [["."] * w for _ in range(h)]
+for _ in range(n):
+    a, b = map(int, input().split())
+    a, b = a + ofs, b + ofs
+    graph[a][b] = "#"
 
 visit = [[-1 for _ in range(w)] for _ in range(h)]
-dx = [0, 1, 0, -1]
-dy = [1, 0, -1, 0]
+move = [(1, 1), (0, 1), (-1, 1), (1, 0), (-1, 0), (0, -1)]
 
-print(bfs(sx, sy))
+res = bfs(sx, sy)
+print(res)
