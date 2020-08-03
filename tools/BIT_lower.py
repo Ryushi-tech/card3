@@ -19,12 +19,11 @@ def main():
         return s
 
     def lower_bound(x):
-        x += 1
-        res = 0
-        k = 2 ** 20         # n 以下で最大の 2^n + α
+        w, res = 0, 0
+        k = 1 << (n - 1).bit_length()         # n 以下で最大の 2^n
         while k:
-            if res + k < n and data[res + k] < x:
-                x -= data[res + k]
+            if res + k <= n and w + data[res + k] <= x:
+                w += data[res + k]
                 res += k
             k >>= 1
         return res + 1
