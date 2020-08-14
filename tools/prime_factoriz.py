@@ -1,5 +1,6 @@
 pf = {}
-m = 999983
+m = 1541406720
+
 for i in range(2, int(m**0.5) + 1):
     while not m % i:
         pf[i] = pf.get(i, 0) + 1

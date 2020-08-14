@@ -65,6 +65,36 @@ def solve():
             h = self.ifmt(H)
             return h
 
+        def autocorrelation(self, f):
+            F = self.fmt(f)
+            H = [(s * s) % self.mod for s in F]
+            h = self.ifmt(H)
+            return h
+
+        @staticmethod
+        def chineserem(r1, m1, r2, m2):
+            c0, c1 = m1, m2
+            a0, a1 = 1, 0
+            b0, b1 = 0, 1
+            while c1:
+                a0, a1 = a1, a0 - c0 // c1 * a1
+                b0, b1 = b1, b0 - c0 // c1 * b1
+                c0, c1 = c1, c0 % c1
+            return (r1 * m2 * b0 + r2 * m1 * a0) % (m1 * m2)
+
+        @staticmethod
+        def arbitrary_mod_convolution(n, f, g, mod):
+            mods = [167772161, 469762049, 1224736769]
+            roots = [3, 3, 3]
+            fmts = [FastModuloTransform(n, mods[i], roots[i]) for i in range(3)]
+            cv = [fmts[i].convolute(f, g) for i in range(3)]
+            res = [0 for _ in range(n)]
+            for i in range(n):
+                res[i] = FastModuloTransform.chineserem(cv[0][i], mods[0], cv[1][i], mods[1])
+                res[i] = FastModuloTransform.chineserem(res[i], mods[0] * mods[1], cv[2][i], mods[2])
+                res[i] %= mod
+            return res
+
     import sys
     input = sys.stdin.readline
 
