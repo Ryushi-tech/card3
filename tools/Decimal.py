@@ -1,3 +1,5 @@
+# use Fraction from fractions first
+
 from decimal import Decimal, ROUND_DOWN
 
 a, b = input().split()
