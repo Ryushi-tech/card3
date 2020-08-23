@@ -1,3 +1,6 @@
+import io
+import os
+input = io.BytesIO(os.read(0,os.fstat(0).st_size)).readline
 MOD = 10 ** 9 + 7
 
 res = []
@@ -8,7 +11,7 @@ for _ in range(q):
     adj_cnt = [0] * n
     adj_cnt[0] = 1
     par = [-1] * n
-    size = [1] * n
+    des_cnt = [1] * n
     leaf_q = []
     edgeNum = []
     for _ in range(n - 1):
@@ -17,6 +20,7 @@ for _ in range(q):
         adj_lis[v - 1].append(u - 1)
         adj_cnt[u - 1] += 1
         adj_cnt[v - 1] += 1
+
     tree_q = [(0, -1)]
     while tree_q:
         v, par_v = tree_q.pop()
@@ -31,12 +35,11 @@ for _ in range(q):
         x = leaf_q.pop()
         if x == 0:
             continue
-        edgeNum.append(size[x] * (n - size[x]))
-        size[par[x]] += size[x]
+        edgeNum.append(des_cnt[x] * (n - des_cnt[x]))
+        des_cnt[par[x]] += des_cnt[x]
         adj_cnt[par[x]] -= 1
         if adj_cnt[par[x]] == 1:
             leaf_q.append(par[x])
-
     edgeNum.sort()
     m = int(input())
     edgeWeight = []
@@ -46,11 +49,9 @@ for _ in range(q):
     if n - 1 < m:
         for i in range(n - 1):
             edgeWeight.append(primeList[i])
-            print(edgeWeight)
         for i in range(n - 1, m):
             edgeWeight[n - 2] *= primeList[i]
             edgeWeight[n - 2] %= MOD
-            print(edgeWeight)
     else:
         for i in range(n - 1 - m):
             edgeWeight.append(1)

@@ -13,5 +13,9 @@ from scipy.sparse import csr_matrix
 from scipy.sparse.csgraph import floyd_warshall, shortest_path
 import sys
 sys.setrecursionlimit(10 ** 7)
-from card3.void.stop_watch import stop_watch
+
+import os, io
+input = io.BytesIO(os.read(0,os.fstat(0).st_size)).readline
+
+from stop_watch import stop_watch
 @stop_watch
