@@ -7,22 +7,25 @@ if sys.argv[-1] == 'ONLINE_JUDGE':
 
     @cc.export('is_ok', '(i8[:],i8[:],i8,i8)')
     def is_ok(A, F, x, k):
-        y = A - x // F
-        tmp = y[y > 0].sum()
+        tmp = 0
+        for a, f in zip(A, F):
+            y = a * f
+            if y > x:
+                tmp += a - x // f
         return tmp <= k
 
     cc.compile()
-    exit(0)
-
+    sys.exit()
 from my_module import is_ok
+
 n, k = map(int, input().split())
-A = np.array(list(map(int, input().split())))
-F = np.array(list(map(int, input().split())))
+A = np.array(input().split(), dtype="i8")
+F = np.array(input().split(), dtype="i8")
 
 A = np.sort(A)
 F = np.sort(F)[::-1]
 
-ok = 10 ** 16
+ok = 10 ** 12
 ng = -1
 while ok - ng > 1:
     mid = (ok + ng) // 2
