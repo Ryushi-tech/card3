@@ -1,34 +1,40 @@
-import sys
-import numpy as np
+mod = (10 ** 9) + 7
+lim = 1100000
 
-if sys.argv[-1] == 'ONLINE_JUDGE':
-    from numba.pycc import CC
-    cc = CC('my_module')
+fct = [0] * lim
+inv_f = [0] * lim
 
-    @cc.export('is_ok', '(i8[:],i8[:],i8,i8)')
-    def is_ok(A, F, x, k):
-        y = A - x // F
-        tmp = y[y > 0].sum()
-        return tmp <= k
+fct[0] = 1
+for i in range(1, lim):
+    fct[i] = fct[i - 1] * i % mod
 
-    cc.compile()
-    exit(0)
+inv_f[lim - 1] = pow(fct[lim - 1], mod - 2, mod)
 
-from my_module import is_ok
-n, k = map(int, input().split())
-A = np.array(list(map(int, input().split())))
-F = np.array(list(map(int, input().split())))
+for i in range(lim - 1, 0, -1):
+    inv_f[i - 1] = inv_f[i] * i % mod
 
-A = np.sort(A)
-F = np.sort(F)[::-1]
 
-ok = 10 ** 16
-ng = -1
-while ok - ng > 1:
-    mid = (ok + ng) // 2
-    if is_ok(A, F, mid, k):
-        ok = mid
+def nCk(a, b):
+    if a < b:
+        return 0
     else:
-        ng = mid
+        return fct[a] * inv_f[b] * inv_f[a - b] % mod
 
-print(ok)
+
+n, k = map(int, input().split())
+s = list(map(int, input().split()))
+s.sort()
+
+s_max = 0
+s_min = 0
+
+for i in range(k - 1, n):
+    s_max = s_max + s[i] * nCk(i, k - 1)
+    s_max %= mod
+
+for i in range(n - k + 1):
+    s_min = s_min + s[i] * nCk(n - i - 1, k - 1)
+    s_min %= mod
+
+print((s_max-s_min) % mod)
+# print(s_max, s_min)

@@ -15,7 +15,10 @@ for i in range(lim - 1, 0, -1):
 
 
 def nCk(a, b):
-    return fct[a] * inv_f[b] * inv_f[a - b] % mod
+    if a < b:
+        return 0
+    else:
+        return fct[a] * inv_f[b] * inv_f[a - b] % mod
 
 
 def nPk(a, b):

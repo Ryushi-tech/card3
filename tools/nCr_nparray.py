@@ -26,5 +26,8 @@ finv = finv.ravel()[::-1]
 
 
 def nCr(a, b):
-    comb = fac[a] * finv[b] % mod * finv[a - b] % mod
-    return comb
+    if a < b:
+        return 0
+    else:
+        comb = fac[a] * finv[b] % mod * finv[a - b] % mod
+        return comb
