@@ -1,26 +1,35 @@
-n, x, m = map(int, input().split())
-g = x * 1
-ans = x
-arr = []
-res = set([])
-roop = (0, 0)
-k = 0
-for i in range(m + 1):
-	tmp = x ** 2 % m
-	if tmp in res:
-		roop = (i, tmp)
-		break
-	res.add(tmp)
-	arr.append(tmp)
-	ans += tmp
-	x = tmp
+import sys
+import networkx as nx
 
-for i, y in enumerate(arr):
-	if y == roop[1]:
-		k = i
-		break
+sread = lambda: sys.stdin.read()
 
-ini = sum(arr[:k])
-mul = ans - ini - g
-t, v = divmod(n - k - 1, roop[0] - k)
-print(g + ini + mul * t + sum(arr[k:k + v]))
+n, m = map(int, input().split())
+A = sread().split()
+
+G = nx.DiGraph()
+supply = sum([x.count("o") for x in A])
+
+sink = n * m + 1
+
+G.add_node(sink, demand=supply)
+G.add_nodes_from(range(sink))
+
+for i in range(n):
+    for j in range(m):
+        if A[i][j] == '#':
+            continue
+        if A[i][j] == 'o':
+            G.add_node(i * m + j, demand=-1)
+            G.add_edge(i * m + j, sink, capacity=1)
+        if A[i][j] == '.':
+            G.add_node(i * m + j)
+            G.add_edge(i * m + j, sink, capacity=1)
+        if i + 1 < n and A[i + 1][j] != '#':
+            G.add_edge(i * m + j, (i + 1) * m + j, weight=-1)
+        if j + 1 < m and A[i][j + 1] != '#':
+            G.add_edge(i * m + j, i * m + j + 1, weight=-1)
+
+flowDict = nx.min_cost_flow(G)
+flowCost = nx.cost_of_flow(G, flowDict)
+
+print(-flowCost)

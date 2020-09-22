@@ -1,4 +1,4 @@
-# use Fraction from fractions first
+# use "Fraction from fractions" first
 
 from decimal import Decimal, ROUND_DOWN
 
