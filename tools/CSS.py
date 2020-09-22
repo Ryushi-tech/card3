@@ -3,34 +3,33 @@ sys.setrecursionlimit(10 ** 5)
 input = lambda: sys.stdin.readline()
 
 
-def dfs(s, USED, g, ORDER):
-    USED[s] = 1
-    for t in g[s]:
-        if not USED[t]:
-            dfs(t, USED, g, ORDER)
-    ORDER.append(s)
-
-
-def rdfs(s, col, GROUP, USED, rg):
-    GROUP[s] = col
-    USED[s] = 1
-    for t in rg[s]:
-        if not USED[t]:
-            rdfs(t, col, GROUP, USED, rg)
-
-
 def scc(N, G, RG):
     order = []
     used = [0] * (N + 1)
     group = [None] * (N + 1)
+
+    def dfs(s):
+        used[s] = 1
+        for t in G[s]:
+            if not used[t]:
+                dfs(t)
+        order.append(s)
+
+    def rdfs(s, col):
+        group[s] = col
+        used[s] = 1
+        for t in RG[s]:
+            if not used[t]:
+                rdfs(t, col)
+
     for i in range(N):
         if not used[i]:
-            dfs(i, used, G, order)
+            dfs(i)
     used = [0] * (N + 1)
     label = 0
     for s in reversed(order):
         if not used[s]:
-            rdfs(s, label, group, used, RG)
+            rdfs(s, label)
             label += 1
     return label, group
 
