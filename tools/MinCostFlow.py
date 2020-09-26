@@ -5,29 +5,35 @@ A = [list(map(int, input().split())) for _ in range(n)]
 
 G = nx.DiGraph()
 
-source = 2 * n
-sink = source + 1
+source = "source"
+sink = "sink"
+offset = 50
+supply = n * k
 
-G.add_node(source, demand=n * -k)
-G.add_node(sink, demand=n * k)
+G.add_node(source, demand=-supply)
+G.add_node(sink, demand=supply)
+G.add_edge(source, sink, capacity=supply, weight=0)
 
-for r in range(n):
-    G.add_edge(source, r, capacity=k, weight=0)
-    G.add_edge(r + n, sink, capacity=k, weight=0)
-    for c in range(n):
-        G.add_edge(r, c + n, capacity=1, weight=-A[r][c])
+X = [i for i in range(n)]
+Y = [i + offset for i in range(n)]
 
-G.add_edge(source, sink, capacity=n * k, weight=0)  # slack
+for x in X:
+    G.add_edge(source, x, capacity=k, weight=0)
+for y in Y:
+    G.add_edge(y, sink, capacity=k, weight=0)
+for x in X:
+    for y in Y:
+        G.add_edge(x, y, capacity=1, weight=-A[x][y - offset])
 
-flowDict = nx.min_cost_flow(G)
-flowCost = nx.cost_of_flow(G, flowDict)
+flow_dict = nx.min_cost_flow(G)
+flow_cost = nx.cost_of_flow(G, flow_dict)
 
-grid = [["." for c in range(n)] for r in range(n)]
-for r in range(n):
-    for c in range(n):
-        if flowDict[r][c + n]:
-            grid[r][c] = "X"
+grid = [["." for _ in range(n)] for _ in range(n)]
+for x in X:
+    for y in Y:
+        if flow_dict[x][y]:
+            grid[x][y - offset] = "X"
 
-print(-flowCost)
+print(-flow_cost)
 for row in grid:
     print("".join(row))

@@ -1,6 +1,6 @@
 class FMT:
     def __init__(self, n1, mod=998244353, pr=3):
-        # def __init__(self, n0, mod=1541406721, pr=17):
+        # def __init__(self, n1, mod=1541406721, pr=17):
         self.n0 = n1 - 1
         self.k = self.n0.bit_length()
         self.N = 1 << self.k

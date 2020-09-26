@@ -1,51 +1,86 @@
-import networkx as nx
+force = 1+10857*3*pow(2, 33)
+print(force)
+class FMT:
+    def __init__(self, n1, mod=force, pr=15):
+        # def __init__(self, n1, mod=998244353, pr=3):
+        # def __init__(self, n1, mod=1541406721, pr=17):
+        self.n0 = n1 - 1
+        self.k = self.n0.bit_length()
+        self.N = 1 << self.k
+        self.mod = mod
+        self.pr = pr
+        self.inv_pr = pow(self.pr, self.mod - 2, self.mod)
+        self.omega = [pow(self.pr, (self.mod - 1) >> i, self.mod) for i in range(24)]
+        self.inv_omega = [pow(self.inv_pr, (self.mod - 1) >> i, self.mod) for i in range(24)]
 
-n, m = map(int, input().split())
-A = [[s for s in input()] for _ in range(n)]
+    def fft(self, f):
+        for l in range(self.k, 0, -1):
+            d = 1 << l - 1
+            U = [1]
+            for i in range(d):
+                U.append(U[-1] * self.omega[l] % self.mod)
 
-G = nx.DiGraph()
+            for i in range(1 << self.k - l):
+                for j in range(d):
+                    s = i * 2 * d + j
+                    t = s + d
+                    f[s], f[t] = (f[s] + f[t]) % self.mod, U[j] * (f[s] - f[t]) % self.mod
 
-source = "source"
-sink = "sink"
+    def ifft(self, f):
+        for l in range(1, self.k + 1):
+            d = 1 << l - 1
+            U = [1]
+            for i in range(d):
+                U.append(U[-1] * self.inv_omega[l] % self.mod)
 
-for i in range(n):
-    for j in range(m):
-        if A[i][j] == '#':
-            continue
-        if A[i][j] == '.':
-            if (i + j) & 1:
-                G.add_edge(source, (i, j), capacity=1)
-                if i + 1 < n and A[i + 1][j] != '#':
-                    G.add_edge((i, j), (i + 1, j), capacity=1)
-                if j + 1 < m and A[i][j + 1] != '#':
-                    G.add_edge((i, j), (i, j + 1), capacity=1)
-                if -1 < i - 1 and A[i - 1][j] != '#':
-                    G.add_edge((i, j), (i - 1, j), capacity=1)
-                if -1 < j - 1 and A[i][j - 1] != '#':
-                    G.add_edge((i, j), (i, j - 1), capacity=1)
-            else:
-                G.add_edge((i, j), sink, capacity=1)
+            for i in range(1 << self.k - l):
+                for j in range(d):
+                    s = i * 2 * d + j
+                    t = s + d
+                    f[s], f[t] = (f[s] + f[t] * U[j]) % self.mod, (f[s] - f[t] * U[j]) % self.mod
 
-grid = A
+    def convolve(self, a, b):
+        a = a + [0] * (self.N - len(a))
+        b = b + [0] * (self.N - len(b))
+        self.fft(a), self.fft(b)
+        for i in range(self.N):
+            a[i] = a[i] * b[i] % self.mod
+        self.ifft(a)
+        inv_n = pow(self.N, self.mod - 2, self.mod)
+        for i in range(self.n0):
+            a[i] = a[i] * inv_n % self.mod
+        del a[self.n0:]
+        return a
 
-try:
-    flow_value, flow_dict = nx.maximum_flow(G, source, sink)
 
-    for sub_dict in flow_dict["source"]:
-        y_source, x_source = sub_dict
-        for (y_sink, x_sink), val in flow_dict[sub_dict].items():
-            if val and y_source != y_sink:
-                grid[y_source][x_source], = "v" if y_sink > y_source else "^"
-                grid[y_sink][x_sink] = "^" if y_sink > y_source else "v"
-            if val and x_source != x_sink:
-                grid[y_source][x_source], = ">" if x_sink > x_source else "<"
-                grid[y_sink][x_sink] = "<" if x_sink > x_source else ">"
+import sys
+input = lambda: sys.stdin.readline()
 
-    print(flow_value)
-    for gr in grid:
-        print("".join(gr))
+n = int(input())
+A = list(map(int, input().split()))
+a = [x for x in A if x != 0]
+mod = 200003
+pr = 2
 
-except nx.NetworkXError:
-    print(0)
-    for gr in grid:
-        print("".join(gr))
+g = [0] * mod
+log = [0] * mod
+exp_pr = 1
+for i in range(mod - 1):
+    g[i] = exp_pr
+    log[exp_pr] = i
+    exp_pr = exp_pr * pr % mod
+
+D = [0] * mod
+ans = 0
+for x in a:
+    D[log[x]] += 1
+    ans -= x * x % mod
+
+
+fmt = FMT(2 * mod)
+E = fmt.convolve(D, D)
+
+for k in range(mod - 1):
+    ans += g[k] * (E[k] + E[mod - 1 + k])
+
+print(ans // 2)
