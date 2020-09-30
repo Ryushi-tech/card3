@@ -1,62 +1,65 @@
 import sys
-input = lambda: sys.stdin.readline()
+input = lambda: sys.stdin.buffer.readline()
 
-po18 = pow(2, 18)
-po36 = pow(2, 36)
+SHIFT = 32
+MASK = (1 << SHIFT) - 1
+MOD = 998244353
 
 
-def bit_length(x):
-    ret = 0
-    while x:
-        x >>= 1
-        ret += 1
-    return ret
+def encode(hi, lo):
+    return ((hi % MOD) << SHIFT) + (lo % MOD)
 
-def encode(a, b, c):
-    return a * po18 + b + c * po36
 
-def decode(codec):
-    return (codec // po18) % po18, codec % po18, codec // po36
+def decode(code):
+    return code >> SHIFT, code & MASK
+
 
 def op(a, b):
-    c0a, c1a, za = decode(a)
-    c0b, c1b, zb = decode(b)
-    return encode(c0a + c0b, c1a + c1b, za + zb + c1a * c0b)
+    a1, a2 = decode(a)
+    b1, b2 = decode(b)
+    return encode(a1 + b1, a2 + b2)
+
 
 def mapping(x, a):
-    if x == 1:
-        c0, c1, z = decode(a)
-        return encode(c1, c0, c1 * c0 - z)
-    else:
-        return a
+    x1, x2 = decode(x)
+    a1, a2 = decode(a)
+    return encode(a1 * x1 + a2 * x2, a2)
+
 
 def composition(x, y):
-    return x ^ y
+    x1, x2 = decode(x)
+    y1, y2 = decode(y)
+    return encode(x1 * y1, x1 * y2 + x2)
 
-e = 0
-_id = 0
+
+e = encode(0, 0)
+_id = encode(1, 0)
 
 n, q = map(int, input().split())
 a = list(map(int, input().split()))
-log = bit_length(n - 1)
+log = (n - 1).bit_length()
 size = 1 << log
 d = [e] * (2 * size)
 lz = [_id] * size
 
-# ----- end of setting ----- #
+# ----- seg tree設定 ここまで ----- #
+
 
 def update(k):
     d[k] = op(d[2 * k], d[2 * k + 1])
+
 
 def all_apply(k, f):
     d[k] = mapping(f, d[k])
     if k < size:
         lz[k] = composition(f, lz[k])
 
+
 def push(k):
     all_apply(2 * k, lz[k])
     all_apply(2 * k + 1, lz[k])
     lz[k] = _id
+
 
 def build(arr):
     # assert len(arr) == n
@@ -64,6 +67,7 @@ def build(arr):
         d[size + j] = arr[j]
     for j in range(size - 1, 0, -1):
         update(j)
+
 
 def set(p, x):
     # assert 0 <= p < n
@@ -74,12 +78,14 @@ def set(p, x):
     for i in range(1, log + 1):
         update(p >> i)
 
+
 def get(p):
     # assert 0 <= p < n
     p += size
     for i in range(1, log + 1):
         push(p >> i)
     return d[p]
+
 
 def prod(l, r):
     # assert 0 <= l <= r <= n
@@ -104,8 +110,10 @@ def prod(l, r):
         r >>= 1
     return op(sml, smr)
 
+
 def all_prod():
     return d[1]
+
 
 def apply(p, f):
     # assert 0 <= p < n
@@ -115,6 +123,7 @@ def apply(p, f):
     d[p] = mapping(f, d[p])
     for i in range(1, log + 1):
         update(p >> i)
+
 
 def range_apply(l, r, f):
     # assert 0 <= l <= r <= n
@@ -146,6 +155,7 @@ def range_apply(l, r, f):
         if ((r >> i) << i) != r:
             update((r - 1) >> i)
 
+
 def max_right(l, g):
     # assert 0 <= l <= n
     # assert g(e)
@@ -170,6 +180,7 @@ def max_right(l, g):
         l += 1
         if (l & -l) == l:
             return n
+
 
 def min_left(r, g):
     # assert 0 <= r <= n
@@ -196,21 +207,18 @@ def min_left(r, g):
         if (r & -r) == r:
             return 0
 
-A = [0] * n
-for i, aa in enumerate(a):
-    if aa:
-        A[i] = encode(0, 1, 0)
-    else:
-        A[i] = encode(1, 0, 0)
+
+A = [(tmp << SHIFT) + 1 for tmp in a]
 
 build(A)
-
 ans = []
 for i in range(q):
-    t, l, r = map(int, input().split())
-    if t == 1:
-        range_apply(l - 1, r, True)
+    t, *REQ = map(int, input().split())
+    if not t:
+        l, r, b, c = REQ
+        range_apply(l, r, encode(b, c))
     else:
-        v, w, z = decode(prod(l - 1, r))
-        ans.append(z)
+        l, r = REQ
+        ans.append(prod(l, r) >> SHIFT)
+
 print('\n'.join(map(str, ans)))

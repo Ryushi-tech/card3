@@ -3,8 +3,6 @@ import numpy as np
 
 
 def solve(inp):
-    MOD = 998244353
-
     def bit_length(x):
         ret = 0
         while x:
@@ -12,38 +10,42 @@ def solve(inp):
             ret += 1
         return ret
 
-    e = 0
-    id_x = -1
+    MOD = 998244353
+    SHIFT = 32
+    MASK = (1 << SHIFT) - 1
+
+    def encode(hi, lo):
+        return ((hi % MOD) << SHIFT) + (lo % MOD)
+
+    def decode(code):
+        return code >> SHIFT, code & MASK
+
+    def op(a, b):
+        a1, a2 = decode(a)
+        b1, b2 = decode(b)
+        return encode(a1 + b1, a2 + b2)
+
+    def mapping(x, a):
+        x1, x2 = decode(x)
+        a1, a2 = decode(a)
+        return encode(a1 * x1 + a2 * x2, a2)
+
+    def composition(x, y):
+        x1, x2 = decode(x)
+        y1, y2 = decode(y)
+        return encode(x1 * y1, x1 * y2 + x2)
+
+    e = encode(0, 0)
+    _id = encode(1, 0)
 
     n = inp[0]
     q = inp[1]
-    X = inp[2::3]
-    Y = inp[3::3]
-    REP = inp[4::3]
+    a = inp[2:n + 2]
+    REQ0 = inp[n + 2:]
     log = bit_length(n - 1)
     size = 1 << log
     d = [e] * (2 * size)
-    lz = [id_x] * size
-
-    def op(a, b):
-        a1, a2 = a >> 32, a % (1 << 32)
-        b1, b2 = b >> 32, b % (1 << 32)
-        c1 = (a1 + b1) % MOD
-        c2 = (a2 + b2) % MOD
-        return (c1 << 32) + c2
-
-    def mapping(x, a):
-        if x == -1:
-            return a
-        a1, a2 = a >> 32, a % (1 << 32)
-        c1 = (x * a2) % MOD
-        c2 = a2
-        return (c1 << 32) + c2
-
-    def composition(x, y):
-        if x == -1:
-            return y
-        return x
+    lz = [_id] * size
 
     # ----- seg tree設定 ここまで ----- #
 
@@ -58,7 +60,7 @@ def solve(inp):
     def push(k):
         all_apply(2 * k, lz[k])
         all_apply(2 * k + 1, lz[k])
-        lz[k] = id_x
+        lz[k] = _id
 
     def build(arr):
         assert len(arr) == n
@@ -199,18 +201,25 @@ def solve(inp):
                 return 0
 
     A = np.zeros(n, dtype=np.int64)
-    tmp = 1
-    for i in range(n - 1, -1, -1):
-        A[i] = (tmp << 32) + tmp
-        tmp *= 10
-        tmp %= MOD
+    for i, tmp in enumerate(a):
+        A[i] = (tmp << SHIFT) + 1
 
     build(A)
-
-    ans = np.zeros(q, dtype=np.int64)
+    REQ = list(REQ0)
+    REQ.reverse()
+    ans = []
     for i in range(q):
-        range_apply(X[i] - 1, Y[i], REP[i])
-        ans[i] = all_prod() >> 32
+        t = REQ.pop()
+        if not t:
+            l = REQ.pop()
+            r = REQ.pop()
+            b = REQ.pop()
+            c = REQ.pop()
+            range_apply(l, r, encode(b, c))
+        else:
+            l = REQ.pop()
+            r = REQ.pop()
+            ans.append(prod(l, r) >> SHIFT)
 
     return ans
 
