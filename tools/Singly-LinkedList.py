@@ -1,31 +1,25 @@
-from card3.void.stop_watch import stop_watch
+n, q = map(int, input().split())
+b = list(range(n + 1))
+a = [-1] * (n + 1)
 
-@stop_watch
-def solve():
-    n, q = map(int, input().split())
-    b = list(range(n + 1))
-    a = [-1] * (n + 1)
+def calc(f, t, x):
+    bf, ax, bt = b[f], a[x], b[t]
+    b[t], b[f], a[x] = bf, ax, bt
+    return
 
-    def calc(f, t, x):
-        bf, ax, bt = b[f], a[x], b[t]
-        b[t], b[f], a[x] = bf, ax, bt
-        return
+for i in range(q):
+    f, t, x = map(int, input().split())
+    calc(f, t, x)
 
-    for i in range(q):
-        f, t, x = map(int, input().split())
-        calc(f, t, x)
+    ans = [0] * (n + 1)
+    for i, k in enumerate(b):
+        if i == 0:
+            continue
+        while k != -1:
+            ans[k] = i
+            k = a[k]
+    print("\n".join(map(str, ans[1:])))
 
-        ans = [0] * (n + 1)
-        for i, k in enumerate(b):
-            if i == 0:
-                continue
-            while k != -1:
-                ans[k] = i
-                k = a[k]
-        print("\n".join(map(str, ans[1:])))
-
-
-solve()
 
 """
 10 20

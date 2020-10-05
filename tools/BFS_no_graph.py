@@ -1,6 +1,3 @@
-from card3.void.stop_watch import stop_watch
-
-@stop_watch
 def solve():
     from collections import deque
     import sys

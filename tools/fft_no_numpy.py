@@ -1,8 +1,6 @@
 import sys
 sys.setrecursionlimit(10 ** 7)
 
-from stop_watch import stop_watch
-@stop_watch
 def solve():
     def I():
         return int(sys.stdin.readline().rstrip())

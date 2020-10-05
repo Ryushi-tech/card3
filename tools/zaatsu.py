@@ -1,3 +1,4 @@
 A = tuple(bisect.bisect_left(Asort, x) for x in A)
 
-Y_rank = {z: i for i, z in enumerate(sorted(Y), 1)}
+sy = sorted({p for p, a, b in PAB})
+compress = {z: i for i, z in enumerate(sy)}
