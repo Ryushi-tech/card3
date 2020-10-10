@@ -1,19 +1,19 @@
 #!/usr/bin/env python3
 
 import random
-lim = 100000
+lim = 90000
 n = random.randint(1, lim)
-m = random.randint(1, lim)
+m = random.randint(2, 2 + n // 300)
 print(n, m)
 # print(n)
 
-tmp1 = list(range(1, m + 1))
-# tmp2 = list(range(1, n + 1))
+tmp1 = [0] * (n // 2) + [1] * (n - n // 2)
+# tmp2 = list(range(1, m + 1))
 random.shuffle(tmp1)
 # random.shuffle(tmp2)
-
-for x in tmp1:
-    print(x, random.uniform(-1, 1), random.uniform(-1, 1))
+print("".join(map(str, tmp1)))
+# for x, y in zip(tmp1[::2], tmp1[1::2]):
+#     print(x, y)
 
 # tmp = []
 # for _ in range(n):

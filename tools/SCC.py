@@ -1,59 +1,52 @@
 import sys
-
-sys.setrecursionlimit(10 ** 5)
 input = lambda: sys.stdin.readline()
 
 
-def scc(G):
-    N = len(G)
-    RG = [[] for _ in range(N)]
+def SCC_Tarjan(g):
+    n = len(g)
+    order = [-1] * n  # 負なら未処理、[0,n) ならpre-order, n ならvisited
+    low = [0] * n
+    ord_now = 0
+    parent = [-1] * n
+    gp = [0] * n
+    gp_num = 0
+    S = []
+    q = []
+    for i in range(n):
+        if order[i] == -1:
+            q.append(i)
+            while q:
+                v = q.pop()
+                if v >= 0:
+                    if order[v] != -1: continue
+                    order[v] = low[v] = ord_now
+                    ord_now += 1
+                    S.append(v)
+                    q.append(~v)
+                    for c in g[v]:
+                        if order[c] == -1:
+                            q.append(c)
+                            parent[c] = v
+                        else:
+                            low[v] = min(low[v], order[c])
+                else:
+                    v = ~v
+                    if parent[v] != -1:
+                        low[parent[v]] = min(low[parent[v]], low[v])
+                    if low[v] == order[v]:
+                        while True:
+                            w = S.pop()
+                            order[w] = n
+                            gp[w] = gp_num
+                            if w == v: break
+                        gp_num += 1
 
-    for i, e in enumerate(G):
-        for v in e:
-            RG[v].append(i)
+    rec = [[] for _ in range(gp_num)]
+    for i in range(n):
+        gp[i] = gp_num - gp[i] - 1
+        rec[gp[i]].append(i)
 
-    order = []
-    used = [0] * (N + 1)
-    group = [None] * (N + 1)
-
-    def dfs(s):
-        used[s] = 1
-        for t in G[s]:
-            if not used[t]:
-                dfs(t)
-        order.append(s)
-
-    def rdfs(s, col):
-        group[s] = col
-        used[s] = 1
-        for t in RG[s]:
-            if not used[t]:
-                rdfs(t, col)
-
-    for i in range(N):
-        if not used[i]:
-            dfs(i)
-
-    used = [0] * (N + 1)
-    label = 0
-
-    for s in reversed(order):
-        if not used[s]:
-            rdfs(s, label)
-            label += 1
-
-    G0 = [set() for _ in range(label)]
-    GP = [[] for _ in range(label)]
-
-    for v in range(N):
-        lbs = group[v]
-        for w in G[v]:
-            lbt = group[w]
-            if lbs == lbt:
-                continue
-            G0[lbs].add(lbt)
-        GP[lbs].append(v)
-    return label, GP
+    return gp_num, rec
 
 
 n, m = map(int, input().split())
@@ -62,7 +55,7 @@ for _ in range(m):
     a, b = map(int, input().split())
     G[a].append(b)
 
-label, GP = scc(G)
+label, GP = SCC_Tarjan(G)
 
 print(label)
 for gp in GP:
