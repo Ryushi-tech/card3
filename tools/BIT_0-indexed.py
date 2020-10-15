@@ -16,6 +16,19 @@ class BIT:
             i |= i + 1
         return
 
+    def lower_bound(self, k):
+        lb = -1
+        l, r = 0, n
+        while l <= r:
+            mid = (l + r) // 2
+            if self.sum(mid) >= k:
+                r = mid - 1
+                lb = mid
+            else:
+                l = mid + 1
+        return lb - 1
+
+
 n, q = map(int, input().split())
 c = list(map(int, input().split()))
 odr_r = [[] for _ in range(n + 1)]
@@ -40,4 +53,3 @@ for i, v in enumerate(c):
     for l, j in odr_r[i + 1]:
         ans[j] = diff - b.sum(l)
 print("\n".join(map(str, ans)))
-return

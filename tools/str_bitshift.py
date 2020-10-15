@@ -1,7 +1,7 @@
 import sys
+from operator import or_
 input = lambda: sys.stdin.readline()
-
-seg_f = lambda x, y: max(x, y)
+seg_f = lambda x, y: or_(x, y)
 ide_ele = 0
 
 def init(N):
@@ -48,19 +48,29 @@ def max_right(l, x):
             ng = mid
     return ok
 
-n, q = map(int, input().split())
-arr = list(map(int, input().split()))
+def bshift(x):
+    shft = ord(x) - ord("a")
+    return 1 << shft
+
+n = int(input())
+s = input().rstrip()
+q = int(input())
+
+arr = []
+for ss in s:
+    arr.append(bshift(ss))
 
 init(n)
 build(arr)
-ans = []
 
+ans = []
 for _ in range(q):
-    t, a, b = map(int, input().split())
+    t, a, b = input().split()
+    t, a = int(t), int(a)
     if t == 1:
-        update(a - 1, b)  # 0-indexed
-    elif t == 2:
-        ans.append(prod(a - 1, b))  # 0-indexed, 半開区間
-    elif t == 3:
-        ans.append(max_right(a - 1, b))
+        update(a - 1, bshift(b))
+    else:
+        b = int(b)
+        res = prod(a - 1, b)
+        ans.append(bin(res).count("1"))
 print("\n".join(map(str, ans)))
