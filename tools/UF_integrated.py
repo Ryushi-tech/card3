@@ -1,5 +1,7 @@
 from collections import defaultdict
-class UnionFind():
+
+
+class UnionFind:
     def __init__(self, n):
         self.n = n
         self.par = [-1] * n

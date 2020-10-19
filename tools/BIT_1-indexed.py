@@ -7,14 +7,14 @@ class BIT:
         self.data = [0] * (n + 1)
         # self.data = [i & -i for i in range(n + 1)]
 
-    def sum(self, i):
+    def query(self, i):
         s = 0
         while i > 0:
             s += self.data[i]
             i -= i & -i
         return s
 
-    def add(self, i, x):
+    def update(self, i, x):
         while i <= self.n:
             self.data[i] += x
             i += i & -i
@@ -47,6 +47,6 @@ B = [None] * n
 for i in range(n - 1, -1, -1):
     x = bit.bit_search(i - A[i])
     B[x - 1] = i + 1
-    bit.add(x, -1)
+    bit.update(x, -1)
 
 print(LIS(B))

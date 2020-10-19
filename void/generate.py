@@ -1,25 +1,29 @@
 #!/usr/bin/env python3
 
 import random
-lim = 10 ** 5
-n = random.randint(1, lim)
-d = n // random.randint(1, 5)
-a = random.randint(1, 10)
+lim = 2000
+h = random.randint(200, lim)
+w = random.randint(200, lim)
 # m = random.randint(2, 2 + n // 300)
-print(n, d, a)
+print(h, w)
 # print(n)
-
-tmp1 = [x for x in range(n)]
-tmp2 = [x for x in range(n)]
-# tmp2 = list(range(1, m + 1))
-random.shuffle(tmp1)
-random.shuffle(tmp2)
+for i in range(h):
+    x = random.randint(0, w)
+    tmp = ["."] * x + ["#"] * (w - x)
+    random.shuffle(tmp)
+    print("".join(tmp))
+# tmp1 = [x for x in range(n)]
+# tmp2 = [x for x in range(n)]
+# random.shuffle(tmp1)
+# random.shuffle(tmp2)
 # print(" ".join(map(str, tmp1)))
-for x, y in zip(tmp1, tmp2):
-    print(x, y)
+# for x, y in zip(tmp1, tmp2):
+#     print(x, y)
 
 # tmp = []
-# for _ in range(n):
-#     v = random.randint(0, lim)
-#     tmp.append(v)
-# print(" ".join(map(str, tmp)))
+# start = 1
+# for _ in range(k):
+#     v = random.randint(start, start + 20)
+#     w = random.randint(v, v + 20)
+#     start = w
+#     print(v, w)

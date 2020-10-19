@@ -10,7 +10,6 @@ for _ in range(int(input())):
         if V[i] == 1:
             for j in W:
                 V[i + j] = 1
-                print(V,i,j,best)
                 if i + j <= k:
                     best = max(best, i + j)
     print(best)

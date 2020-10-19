@@ -1,9 +1,11 @@
 import sys
-sys.setrecursionlimit(1000000)
+sys.setrecursionlimit(10 ** 7)
 
 
 def dfs(x, y):
-    if x < 0 or h <= x or y < 0 or w <= y or graph[x][y] == "#" or visit[x][y]:
+    if x < 0 or h <= x or y < 0 or w <= y:
+        return 0
+    if graph[x][y] == "#" or visit[x][y]:
         return 0
     visit[x][y] = 1
     for k in range(4):
@@ -15,6 +17,7 @@ graph = [list(input()) for _ in range(h)]
 visit = [[0 for _ in range(w)] for _ in range(h)]
 dx = [0, 1, 0, -1]
 dy = [1, 0, -1, 0]
+sx, sy, gx, gy = 0, 0, 0, 0
 
 for i in range(h):
     for j in range(w):

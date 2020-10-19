@@ -37,7 +37,7 @@ _id = encode(1, 0)
 
 n, q = map(int, input().split())
 a = list(map(int, input().split()))
-log = (n - 1).bit_length()
+log = (n - 1).bit_length()  # n - 1: array size - 1
 size = 1 << log
 d = [e] * (2 * size)
 lz = [_id] * size

@@ -20,7 +20,7 @@ def solve(inp):
     X = inp[2::3]
     Y = inp[3::3]
     REP = inp[4::3]
-    log = bit_length(n - 1)
+    log = bit_length(n - 1)  # n - 1: array size - 1
     size = 1 << log
     d = [e] * (2 * size)
     lz = [id_x] * size

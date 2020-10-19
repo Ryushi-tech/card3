@@ -1,22 +1,22 @@
-t = int(input())
-for t_itr in range(t):
-    arr_count = int(input())
+q = int(input())
+
+for _ in range(q):
+    n = int(input())
     arr = list(map(int, input().rstrip().split()))
-    lenarr = len(arr)
-    dp = [0] * (lenarr + 1)
+    dp = [0] * (n + 1)
     bricks = list(reversed(arr))
-    suma = [0] * (lenarr + 1)
+    tmp = [0] * (n + 1)
     for i in range(1, len(arr) + 1):
         print(bricks)
         print(dp)
-        print(suma)
-        suma[i] = suma[i - 1] + bricks[i - 1]
+        print(tmp)
+        tmp[i] = tmp[i - 1] + bricks[i - 1]
         if i <= 3:
             dp[i] = sum(bricks[:i])
         else:
-            a = bricks[i - 1] - dp[i - 1] + suma[i - 1]
-            b = sum(bricks[i - 2:i]) - dp[i - 2] + suma[i - 2]
-            c = sum(bricks[i - 3:i]) - dp[i - 3] + suma[i - 3]
+            a = bricks[i - 1] - dp[i - 1] + tmp[i - 1]
+            b = sum(bricks[i - 2:i]) - dp[i - 2] + tmp[i - 2]
+            c = sum(bricks[i - 3:i]) - dp[i - 3] + tmp[i - 3]
             dp[i] = max(a, b, c)
-            print(a,b,c)
-    print(dp[lenarr])
+            print(a, b, c)
+    print(dp[n])

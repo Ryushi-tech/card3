@@ -1,4 +1,4 @@
-class FastModuloTransform():
+class FastModuloTransform:
     def __init__(self, n, mod=998244353, root=3):
     #def __init__(self, n, mod=1541406721, root=17):
         self.h = (n - 1).bit_length()

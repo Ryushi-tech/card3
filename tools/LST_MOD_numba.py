@@ -42,7 +42,7 @@ def solve(inp):
     q = inp[1]
     a = inp[2:n + 2]
     REQ0 = inp[n + 2:]
-    log = bit_length(n - 1)
+    log = bit_length(n - 1)  # n - 1: array size - 1
     size = 1 << log
     d = [e] * (2 * size)
     lz = [_id] * size

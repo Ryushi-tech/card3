@@ -1,4 +1,4 @@
-def list_divs(x):
+def divs_list(x):
     divs = []
     for y in range(1, int(x ** 0.5) + 1):
         if x % y == 0:

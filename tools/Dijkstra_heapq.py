@@ -1,13 +1,5 @@
 import heapq
-n = int(input())
-g = [[] for _ in range(n)]
-for _ in range(n - 1):
-    a, b, c = map(int, input().split())
-    a, b = a - 1, b - 1
-    g[a].append((b, c))
-    g[b].append((a, c))
-inf = 10**14
-dist = [inf] * n
+
 
 def dijkstra(s):
     q = []
@@ -22,11 +14,24 @@ def dijkstra(s):
                 dist[i] = dist[v] + x
                 heapq.heappush(q, [dist[i], i])
 
+
+n = int(input())
+g = [[] for _ in range(n)]
+
+for _ in range(n - 1):
+    a, b, c = map(int, input().split())
+    a, b = a - 1, b - 1
+    g[a].append((b, c))
+    g[b].append((a, c))
+
+inf = 10 ** 14
+dist = [inf] * n
+
 m, k = map(int, input().split())
 k = k - 1
 dijkstra(k)
+
 for _ in range(m):
     e, f = map(int, input().split())
     res = dist[e - 1] + dist[f - 1]
     print(res)
-

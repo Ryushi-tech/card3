@@ -200,7 +200,7 @@ def min_left(r, g):
 
 
 n, q = map(int, input().split())
-log = (n - 1).bit_length()
+log = (n - 1).bit_length()  # n - 1: array size - 1
 size = 1 << log
 d = [e] * (2 * size)
 lz = [id_x] * size

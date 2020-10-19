@@ -3,7 +3,7 @@ class BIT:
         self.n = n
         self.data = [0] * n
 
-    def sum(self, i):
+    def query(self, i):
         s = 0
         while i > 0:
             s += self.data[i - 1]
@@ -21,7 +21,7 @@ class BIT:
         l, r = 0, n
         while l <= r:
             mid = (l + r) // 2
-            if self.sum(mid) >= k:
+            if self.query(mid) >= k:
                 r = mid - 1
                 lb = mid
             else:
@@ -51,5 +51,5 @@ for i, v in enumerate(c):
     last[v] = i
 
     for l, j in odr_r[i + 1]:
-        ans[j] = diff - b.sum(l)
+        ans[j] = diff - b.query(l)
 print("\n".join(map(str, ans)))
