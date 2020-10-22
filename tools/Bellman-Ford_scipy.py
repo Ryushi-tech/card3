@@ -17,5 +17,5 @@ try:
     ans = -tmp[-1]
     ans_i = ans.astype('i8')
     print(ans_i)
-except Exception:
+except Exception:  # Note that any error could be captured
     print("inf")

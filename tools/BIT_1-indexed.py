@@ -19,7 +19,7 @@ class BIT:
             self.data[i] += x
             i += i & -i
 
-    def bit_search(self, k):
+    def binary_lift_search(self, k):
         su, pos = 0, 0
         N = 1 << (self.n - 1).bit_length()
         while N:
@@ -45,7 +45,7 @@ bit = BIT(n)
 
 B = [None] * n
 for i in range(n - 1, -1, -1):
-    x = bit.bit_search(i - A[i])
+    x = bit.binary_lift_search(i - A[i])
     B[x - 1] = i + 1
     bit.update(x, -1)
 

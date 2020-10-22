@@ -1,66 +1,59 @@
 import io
 import os
 input = io.BytesIO(os.read(0,os.fstat(0).st_size)).readline
-MOD = 10 ** 9 + 7
+mod = 10 ** 9 + 7
 
-res = []
 q = int(input())
+res = []
+
 for _ in range(q):
     n = int(input())
-    adj_lis = [[] for i in range(n)]
-    adj_cnt = [0] * n
-    adj_cnt[0] = 1
-    par = [-1] * n
-    des_cnt = [1] * n
-    leaf_q = []
-    edgeNum = []
-    for _ in range(n - 1):
-        u, v = map(int, input().split())
-        adj_lis[u - 1].append(v - 1)
-        adj_lis[v - 1].append(u - 1)
-        adj_cnt[u - 1] += 1
-        adj_cnt[v - 1] += 1
+    E = [[] for _ in range(n + 1)]
 
-    tree_q = [(0, -1)]
-    while tree_q:
-        v, par_v = tree_q.pop()
-        par[v] = par_v
-        for x in adj_lis[v]:
-            if x != par_v:
-                tree_q.append((x, v))
-        if adj_cnt[v] == 1:
-            leaf_q.append(v)
+    for i in range(n - 1):
+        x, y = map(int, input().split())
+        E[x].append(y)
+        E[y].append(x)
 
-    while leaf_q:
-        x = leaf_q.pop()
-        if x == 0:
-            continue
-        edgeNum.append(des_cnt[x] * (n - des_cnt[x]))
-        des_cnt[par[x]] += des_cnt[x]
-        adj_cnt[par[x]] -= 1
-        if adj_cnt[par[x]] == 1:
-            leaf_q.append(par[x])
-    edgeNum.sort()
     m = int(input())
-    edgeWeight = []
-    primeList = list(map(int, input().split()))
-    primeList.sort()
+    V = sorted(map(int, input().split()))
 
-    if n - 1 < m:
-        for i in range(n - 1):
-            edgeWeight.append(primeList[i])
-        for i in range(n - 1, m):
-            edgeWeight[n - 2] *= primeList[i]
-            edgeWeight[n - 2] %= MOD
+    if m < n - 1:
+        V = [1] * (n - 1 - m) + V
     else:
-        for i in range(n - 1 - m):
-            edgeWeight.append(1)
-        for i in range(m):
-            edgeWeight.append(primeList[i])
+        X = 1
+        for j in range(m - n + 1):
+            X = X * V[-j - 1] % mod
+        V[n - 2] = V[n - 2] * X % mod
+
+    order = []
+    que = [(1, -1)]
+    par = [-1] * (n + 1)
+    size = [1] * (n + 1)
+
+    while que:
+        x, px = que.pop()
+        order.append(x)
+
+        for v in E[x]:
+            if v == px:
+                continue
+            que.append((v, x))
+            par[v] = x
+
+    products = []
+    order.reverse()
+    for x in order:
+        px = par[x]
+        if px == -1:
+            continue
+        products.append(size[x] * (n - size[x]))
+        size[px] += size[x]
+
+    products.sort()
 
     ans = 0
     for i in range(n - 1):
-        ans += edgeNum[i] * edgeWeight[i]
-        ans %= MOD
+        ans = (ans + products[i] * V[i]) % mod
     res.append(ans)
 print("\n".join(map(str, res)))

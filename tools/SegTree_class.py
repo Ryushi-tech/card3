@@ -80,16 +80,16 @@ A = list(map(int, input().split()))
 seg_f = lambda x, y: max(x, y)
 ide_ele = 0
 
-Seg = SegmentTree(A, seg_f, ide_ele)
+st = SegmentTree(A, seg_f, ide_ele)
 ans = []
 
 for _ in range(q):
     t, a, b = map(int, input().split())
     if t == 1:
-        Seg.update(a - 1, b)
+        st.update(a - 1, b)
     elif t == 2:
-        ans.append(Seg.query(a - 1, b))
+        ans.append(st.query(a - 1, b))
     elif t == 3:
-        k = Seg.binsearch(a - 1, n, b)
+        k = st.binsearch(a - 1, n, b)
         ans.append(n + 1 if k == -1 else k + 1)
 print("\n".join(map(str, ans)))

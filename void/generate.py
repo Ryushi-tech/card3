@@ -1,17 +1,18 @@
 #!/usr/bin/env python3
 
 import random
-lim = 2000
+lim = 100000
 h = random.randint(200, lim)
-w = random.randint(200, lim)
+w = random.randint(200, h // 2)
 # m = random.randint(2, 2 + n // 300)
 print(h, w)
 # print(n)
-for i in range(h):
-    x = random.randint(0, w)
-    tmp = ["."] * x + ["#"] * (w - x)
-    random.shuffle(tmp)
-    print("".join(tmp))
+for i in range(1, w + 1):
+    print(i, i + random.randint(1, 3))
+    # x = random.randint(0, w)
+    # tmp = ["."] * x + ["#"] * (w - x)
+    # random.shuffle(tmp)
+    # print("".join(tmp))
 # tmp1 = [x for x in range(n)]
 # tmp2 = [x for x in range(n)]
 # random.shuffle(tmp1)
