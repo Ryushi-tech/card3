@@ -1,60 +1,103 @@
 import sys
+readline = sys.stdin.readline
+write = sys.stdout.write
 
-input = sys.stdin.readline
-mod = 10 ** 9 + 7
+from collections import deque
+class Dinic:
+    def __init__(self, N):
+        self.N = N
+        self.G = [[] for i in range(N)]
+        self.D = {}
 
-t = int(input())
-for tests in range(t):
-    n = int(input())
-    E = [[] for i in range(n + 1)]
+    def add_edge(self, fr, to, cap):
+        forward = [to, cap, None]
+        forward[2] = backward = [fr, 0, forward]
+        self.G[fr].append(forward)
+        self.G[to].append(backward)
+        self.D[fr, to] = forward
 
-    for i in range(n - 1):
-        x, y = map(int, input().split())
-        E[x].append(y)
-        E[y].append(x)
+    def bfs(self, s, t):
+        self.level = level = [None]*self.N
+        deq = deque([s])
+        level[s] = 0
+        G = self.G
+        while deq:
+            v = deq.popleft()
+            lv = level[v] + 1
+            for w, cap, _ in G[v]:
+                if cap and level[w] is None:
+                    level[w] = lv
+                    deq.append(w)
+        return level[t] is not None
 
-    m = int(input())
-    V = sorted(map(int, input().split()))
+    def dfs(self, v, t, f):
+        if v == t:
+            return f
+        level = self.level
+        for e in self.it[v]:
+            w, cap, rev = e
+            if cap and level[v] < level[w]:
+                d = self.dfs(w, t, min(f, cap))
+                if d:
+                    e[1] -= d
+                    rev[1] += d
+                    return d
+        return 0
 
-    if m < n - 1:
-        V = [1] * (n - 1 - m) + V
+    def flow(self, s, t):
+        flow = 0
+        INF = 10**9 + 7
+        G = self.G
+        while self.bfs(s, t):
+            *self.it, = map(iter, self.G)
+            f = INF
+            while f:
+                f = self.dfs(s, t, INF)
+                flow += f
+        return flow
+
+def solve():
+    N, M, S, T = map(int, readline().split())
+    if N == M == 0:
+        return False
+    S -= 1; T -= 1
+    E = []
+    INF = 10**9
+    dinic = Dinic(N)
+    for i in range(M):
+        a, b = map(int, readline().split()); a -= 1; b -= 1
+        dinic.add_edge(a, b, 1)
+        E.append((a, b))
+    f = dinic.flow(S, T)
+
+    used = [0]*N
+    que = deque([S])
+    used[S] = 1
+    while que:
+        v = que.popleft()
+        for w, cap, _ in dinic.G[v]:
+            if cap == 0 or used[w]:
+                continue
+            used[w] = 1
+            que.append(w)
+    que = deque([T])
+    used[T] = 2
+    while que:
+        v = que.popleft()
+        for w, cap, _ in dinic.G[v]:
+            if cap > 0 or used[w]:
+                continue
+            used[w] = 2
+            que.append(w)
+    cnt = 0
+    for a, b in E:
+        if used[a] == 2 and used[b] == 1:
+            print(a, b)
+            cnt += 1
+    if cnt:
+        write("%d %d\n" % (f+1, cnt))
     else:
-        X = 1
-        for j in range(m - n + 1):
-            X = X * V[-j - 1] % mod
-        V[n - 2] = V[n - 2] * X % mod
-
-    TOP_SORT = []
-    Q = [1]
-    USE = [0] * (n + 1)
-    USE[1] = 1
-    P = [-1] * (n + 1)
-
-    while Q:
-        x = Q.pop()
-        TOP_SORT.append(x)
-
-        for to in E[x]:
-            if USE[to] == 0:
-                Q.append(to)
-                P[to] = x
-                USE[to] = 1
-
-    L = [1] * (n + 1)
-
-    LIST = []
-    for x in TOP_SORT[1:][::-1]:
-        LIST.append(L[x] * (n - L[x]))
-        L[P[x]] += L[x]
-
-    LIST.sort()
-    print(L)
-
-    # print(V)
-    print(LIST)
-
-    ANS = 0
-    for i in range(n - 1):
-        ANS = (ANS + LIST[i] * V[i]) % mod
-    print(ANS)
-
+        write("%d %d\n" % (f, 0))
+    return True
+while solve():
+    ...

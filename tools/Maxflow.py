@@ -8,6 +8,9 @@ G = nx.DiGraph()
 source = "source"
 sink = "sink"
 
+G.add_node(source)
+G.add_node(sink)
+
 for i in range(n):
     for j in range(m):
         if A[i][j] == '#':

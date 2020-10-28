@@ -1,23 +1,31 @@
 #!/usr/bin/env python3
 
 import random
-lim = 500
-h = random.randint(1, lim)
-w = random.randint(1, lim)
+lim = 50
+n = random.randint(1, lim)
+m = random.randint(n, lim)
+s = random.randint(1, n - 1)
+t = random.randint(2, n)
 # m = random.randint(2, 2 + n // 300)
-print(h, w)
+print(n, m, s, t)
+print(s, random.randint(s + 1, n))
+print(random.randint(1, t-1), t)
+for i in range(m - 2):
+    x, y = random.sample(range(1, n), k=2)
+    print(x, y)
+print(0,0,0,0)
 # print(n)
-for i in range(h):
-    # print(i, i + random.randint(1, 3))
-    x = random.randint(0, w)
-    if i == 0:
-        tmp = ["s"] + ["."] * x + ["#"] * (w - x - 1)
-    elif i == h - 1:
-        tmp = ["g"] + ["."] * x + ["#"] * (w - x - 1)
-    else:
-        tmp = ["."] * x + ["#"] * (w - x)
-    random.shuffle(tmp)
-    print("".join(tmp))
+# for i in range(h):
+#     print(i, i + random.randint(1, 3))
+    # x = random.randint(0, w)
+    # if i == 0:
+    #     tmp = ["s"] + ["."] * x + ["#"] * (w - x - 1)
+    # elif i == h - 1:
+    #     tmp = ["g"] + ["."] * x + ["#"] * (w - x - 1)
+    # else:
+    #     tmp = ["."] * x + ["#"] * (w - x)
+    # random.shuffle(tmp)
+    # print("".join(tmp))
 # tmp1 = [x for x in range(n)]
 # tmp2 = [x for x in range(n)]
 # random.shuffle(tmp1)

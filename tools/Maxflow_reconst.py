@@ -18,7 +18,6 @@ while True:
         G.add_edge(a, b, capacity=x)
         edges.append((a, b))
     res, flow_dict = nx.maximum_flow(G, s, t)
-    # print(flow_dict)
 
     Gdash = nx.DiGraph()
     for a, b in edges:
@@ -31,12 +30,10 @@ while True:
     S.add(s)
     T = nx.ancestors(Gdash, t)
     T.add(t)
-    # print(S, T)
     cnt = 0
     for edge in edges:
         a, b = edge
         if b in S and a in T:
-            # print(a - 1, b - 1)
             cnt += 1
     if not cnt:
         print(res, cnt)
