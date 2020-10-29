@@ -10,10 +10,7 @@ while True:
     capacities = defaultdict(int)
     for _ in range(m):
         a, b = map(int, input().split())
-        if (a, b) in capacities:
-            capacities[(a, b)] += 1
-        else:
-            capacities[(a, b)] = 1
+        capacities[(a, b)] += 1
         x = capacities[(a, b)]
         G.add_edge(a, b, capacity=x)
         edges.append((a, b))
