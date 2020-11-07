@@ -2,7 +2,7 @@
 
 home=/Users/ryushi/PycharmProjects/card3/void/
 
-base=https://atcoder.jp/contests/abc180/tasks/abc180_
+base=https://atcoder.jp/contests/abc181/tasks/abc181_
 
 var1=${base}a
 var2=${base}b

@@ -7,11 +7,19 @@ class UnionFind:
         self.par = [-1] * n
 
     def find(self, x):
-        if self.par[x] < 0:
-            return x
-        else:
-            self.par[x] = self.find(self.par[x])
-            return self.par[x]
+        xcopy = x
+        while -1 < self.par[x]:
+            x = self.par[x]
+        while xcopy != x:
+            self.par[xcopy], xcopy = x, self.par[xcopy]
+        return x
+
+    # def find(self, x):
+    #     if self.par[x] < 0:
+    #         return x
+    #     else:
+    #         self.par[x] = self.find(self.par[x])
+    #         return self.par[x]
 
     def unite(self, x, y):
         x = self.find(x)
@@ -44,6 +52,7 @@ class UnionFind:
 
     def all_group_members(self):
         return {r: self.members(r) for r in self.roots()}
+
 
 n, k = map(int, input().split())
 p = list(map(int, input().split()))

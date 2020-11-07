@@ -4,19 +4,19 @@ class WeightedUnionFind:
         self.rank = [0] * (n + 1)
         self.weight = [0] * (n + 1)
 
-    def root(self, x):
+    def find(self, x):
         if self.par[x] == x:
             return x
         else:
-            y = self.root(self.par[x])
+            y = self.find(self.par[x])
             self.weight[x] += self.weight[self.par[x]]
             self.par[x] = y
             return y
 
 
     def unite(self, x, y, w):
-        rx = self.root(x)
-        ry = self.root(y)
+        rx = self.find(x)
+        ry = self.find(y)
         if self.rank[rx] < self.rank[ry]:
             self.par[rx] = ry
             self.weight[rx] = w - self.weight[x] + self.weight[y]
@@ -27,7 +27,7 @@ class WeightedUnionFind:
                 self.rank[rx] += 1
 
     def same(self, x, y):
-        return self.root(x) == self.root(y)
+        return self.find(x) == self.find(y)
 
     def diff(self, x, y):
         return self.weight[x] - self.weight[y]
