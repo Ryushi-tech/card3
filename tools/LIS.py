@@ -9,3 +9,6 @@ def LIS(arr: list):
         L[x] = ar
     return bisect_left(L, INF)
 
+
+A = [1, 30, 70, 2, 60, 40, 50]
+print(LIS(A))

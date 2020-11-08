@@ -1,11 +1,14 @@
+import sys
+input = lambda: sys.stdin.readline()
+
+
 class WeightedUnionFind:
     def __init__(self, n):
-        self.par = [i for i in range(n + 1)]
-        self.rank = [0] * (n + 1)
+        self.par = [-1] * (n + 1)
         self.weight = [0] * (n + 1)
 
     def find(self, x):
-        if self.par[x] == x:
+        if self.par[x] < 0:
             return x
         else:
             y = self.find(self.par[x])
@@ -13,24 +16,24 @@ class WeightedUnionFind:
             self.par[x] = y
             return y
 
-
     def unite(self, x, y, w):
-        rx = self.find(x)
-        ry = self.find(y)
-        if self.rank[rx] < self.rank[ry]:
-            self.par[rx] = ry
-            self.weight[rx] = w - self.weight[x] + self.weight[y]
-        else:
-            self.par[ry] = rx
-            self.weight[ry] = -w - self.weight[y] + self.weight[x]
-            if self.rank[rx] == self.rank[ry]:
-                self.rank[rx] += 1
+        px = self.find(x)
+        py = self.find(y)
+        w += self.weight[x] - self.weight[y]
+        if px == py:
+            return 0
+        if self.par[px] >= self.par[py]:
+            px, py = py, px
+            w = -w
+        self.par[px] += self.par[py]
+        self.par[py] = px
+        self.weight[py] = w
 
     def same(self, x, y):
         return self.find(x) == self.find(y)
 
     def diff(self, x, y):
-        return self.weight[x] - self.weight[y]
+        return self.weight[y] - self.weight[x]
 
 
 n, m = map(int, input().split())

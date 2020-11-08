@@ -24,13 +24,10 @@ class UnionFind:
     def unite(self, x, y):
         x = self.find(x)
         y = self.find(y)
-
         if x == y:
             return
-
         if self.par[x] > self.par[y]:
             x, y = y, x
-
         self.par[x] += self.par[y]
         self.par[y] = x
 
