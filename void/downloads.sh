@@ -1,26 +1,27 @@
 #!/bin/zsh
 
+num=183
 home=/Users/ryushi/PycharmProjects/card3/void/
 
-base=https://atcoder.jp/contests/abc181/tasks/abc181_
+base=https://atcoder.jp/contests/abc${num}/tasks/abc${num}_
 
 var1=${base}a
 var2=${base}b
 var3=${base}c
 var4=${base}d
+var5=${base}e
 
-rm -rf ${home}A/test
-rm -rf ${home}B/test
-rm -rf ${home}C/test
-rm -rf ${home}D/test
+rm -rf ${home}A/test ${home}B/test ${home}C/test ${home}D/test ${home}E/test
 
-cd ${home}A
+cd ${home}A || exit
 oj d $var1
-cd ${home}B
+cd ${home}B || exit
 oj d $var2
-cd ${home}C
+cd ${home}C || exit
 oj d $var3
-cd ${home}D
+cd ${home}D || exit
 oj d $var4
+cd ${home}E || exit
+oj d $var5
 
-cd ${home}
+cd ${home} || exit
