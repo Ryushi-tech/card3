@@ -1,64 +1,50 @@
+import sys
+input = lambda: sys.stdin.readline()
+from operator import xor
+
+
 class LazySegmentTree:
-    def __init__(self, op, e, mapping, composition, _id, init_array):
+    def __init__(self, arr, op, e, map_f, cmp_f, _id):
         self.op = op
         self.e = e
-        self.mapping = mapping
-        self.composition = composition
+        self.map_f = map_f
+        self.cmp_f = cmp_f
         self._id = _id
-
-        l = len(init_array)
-
-        def bit_length(x):
-            ret = 0
-            while x:
-                x >>= 1
-                ret += 1
-            return ret
-
-        self.log = bit_length(l)
-        self.size = 1 << self.log
-        self.d = [e() for _ in range(2 * self.size)]
-        self.lz = [_id() for _ in range(self.size)]
-
-        for i, a in enumerate(init_array):
-            self.d[i + self.size] = a
-
-        for i in range(self.size - 1, 0, -1):
+        self.log = len(arr).bit_length()
+        self.N = 1 << self.log
+        self.d = [e for _ in range(2 * self.N)]
+        self.lz = [_id for _ in range(self.N)]
+        for i, a in enumerate(arr):
+            self.d[i + self.N] = a
+        for i in range(self.N - 1, 0, -1):
             self.__update(i)
 
     def set(self, p, x):
-        p += self.size
-
+        p += self.N
         for i in range(self.log, 0, -1):
             self.__push(p >> i)
-
         self.d[p] = x
-
         for i in range(1, self.log + 1):
             self.__update(p >> i)
 
     def __getitem__(self, p):
-        p += self.size
+        p += self.N
         for i in range(self.log, 0, -1):
             self.__push(p >> i)
         return self.d[p]
 
     def prod(self, l, r):
         if l == r:
-            return self.e()
-
-        l += self.size
-        r += self.size
-
+            return self.e
+        l += self.N
+        r += self.N
         for i in range(self.log, 0, -1):
             if ((l >> i) << i) != l:
                 self.__push(l >> i)
             if ((r >> i) << i) != r:
                 self.__push(r >> i)
-
-        sml = self.e()
-        smr = self.e()
-
+        sml = self.e
+        smr = self.e
         while l < r:
             if l & 1:
                 sml = self.op(sml, self.d[l])
@@ -68,22 +54,18 @@ class LazySegmentTree:
                 smr = self.op(self.d[r], smr)
             l >>= 1
             r >>= 1
-
         return self.op(sml, smr)
 
     def apply(self, l, r, f):
         if l == r:
             return
-
-        l += self.size
-        r += self.size
-
+        l += self.N
+        r += self.N
         for i in range(self.log, 0, -1):
             if ((l >> i) << i) != l:
                 self.__push(l >> i)
             if ((r >> i) << i) != r:
                 self.__push((r - 1) >> i)
-
         l2, r2 = l, r
         while l < r:
             if l & 1:
@@ -95,7 +77,6 @@ class LazySegmentTree:
             l >>= 1
             r >>= 1
         l, r = l2, r2
-
         for i in range(1, self.log + 1):
             if ((l >> i) << i) != l:
                 self.__update(l >> i)
@@ -106,56 +87,52 @@ class LazySegmentTree:
         self.d[k] = self.op(self.d[2 * k], self.d[2 * k + 1])
 
     def __all_apply(self, k, f):
-        self.d[k] = self.mapping(f, self.d[k])
-        if k < self.size:
-            self.lz[k] = self.composition(f, self.lz[k])
+        self.d[k] = self.map_f(f, self.d[k])
+        if k < self.N:
+            self.lz[k] = self.cmp_f(f, self.lz[k])
 
     def __push(self, k):
         self.__all_apply(2 * k, self.lz[k])
         self.__all_apply(2 * k + 1, self.lz[k])
-        self.lz[k] = self._id()
+        self.lz[k] = self._id
 
 
-M = 998244353
+def op(a, b):
+    c0a, c1a, za = a
+    c0b, c1b, zb = b
+    return c0a + c0b, c1a + c1b, za + zb + c1a * c0b
 
 
-def e():
-    return 0
+def mapping(x, a):
+    if x:
+        c0, c1, z = a
+        return c1, c0, c1 * c0 - z
+    else:
+        return a
 
 
-def op(sl, sr):
-    return (sl + sr) % M
+composition = xor
+e = (0, 0, 0)
+_id = 0
 
+n, q = map(int, input().split())
+a = list(map(int, input().split()))
 
-def mapping(fl, sr):
-    return (fl + sr) % M
+A = []
+for aa in a:
+    if aa:
+        A.append((0, 1, 0))
+    else:
+        A.append((1, 0, 0))
 
+lst = LazySegmentTree(A, op, e, mapping, composition, _id)
 
-def composition(fl, fr):
-    return (fl + fr) % M
-
-
-def _id():
-    return 0
-
-
-def slv(N, LR):
-    A = [0] * (N + 1)
-    memo = LazySegmentTree(op, e, mapping, composition, _id, A)
-    memo.apply(1, 1 + 1, 1)
-    for i in range(1, N + 1):
-        n = memo[i]
-        for l, r in LR:
-            ll = min(N + 1, i + l)
-            rr = min(N + 1, i + r + 1)
-            memo.apply(ll, rr, n)
-
-    return memo[N]
-
-n, k = map(int, input().split())
-LR = []
-for i in range(k):
-    l, r = map(int, input().split())
-    LR.append((l, r))
-
-print(slv(n, LR))
+ans = []
+for i in range(q):
+    t, l, r = map(int, input().split())
+    if t == 1:
+        lst.apply(l - 1, r, 1)
+    else:
+        v, w, z = lst.prod(l - 1, r)
+        ans.append(z)
+print('\n'.join(map(str, ans)))

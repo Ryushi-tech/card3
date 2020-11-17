@@ -1,86 +1,80 @@
 class SegmentTree:
-    def __init__(self, init_arr, segfunc, ide_ele):
-        n = len(init_arr)
-        self.segfunc = segfunc
-        self.ide_ele = ide_ele
-        self.num = 1 << (n - 1).bit_length()
-        self.tree = [ide_ele] * 2 * self.num
-        self.range = [(-1, n)] * 2 * self.num
-        for i in range(n):
-            self.tree[self.num + i] = init_arr[i]
-            self.range[self.num + i] = (i, i)
-        for i in range(self.num - 1, 0, -1):
-            self.tree[i] = self.segfunc(self.tree[2 * i], self.tree[2 * i + 1])
-            self.range[i] = (self.range[2 * i][0], self.range[2 * i + 1][1])
+    def __init__(self, arr, op, e):
+        n = len(arr)
+        self.op = op
+        self.e = e
+        self.N = 1 << (n - 1).bit_length()
+        self.d = [e] * 2 * self.N
+        for i, a in enumerate(arr):
+            self.d[self.N + i] = a
+        for i in range(self.N - 1, 0, -1):
+            self.__update(i)
+
+    def __update(self, k):
+        self.d[k] = self.op(self.d[2 * k], self.d[2 * k + 1])
 
     def update(self, k, x):
-        k += self.num
-        self.tree[k] = x
-        while k > 1:
-            self.tree[k >> 1] = self.segfunc(self.tree[k], self.tree[k ^ 1])
+        k += self.N
+        self.d[k] = x
+        while k:
             k >>= 1
+            self.__update(k)
 
     def query(self, l, r):
-        res = self.ide_ele
-
-        l += self.num
-        r += self.num
+        l += self.N
+        r += self.N
+        sml, smr = self.e, self.e
         while l < r:
             if l & 1:
-                res = self.segfunc(res, self.tree[l])
+                sml = self.op(sml, self.d[l])
                 l += 1
             if r & 1:
-                res = self.segfunc(res, self.tree[r - 1])
+                r -= 1
+                smr = self.op(self.d[r], smr)
             l >>= 1
             r >>= 1
-        return res
+        return self.op(sml, smr)
 
-    def binsearch(self, l, r, x):
-        l += self.num
-        r += self.num
-        Lmin = -1
-        Rmin = -1
+    def __search(self, k, x):
+        pos = k
+        while pos < self.N:
+            if self.d[2 * pos] >= x:
+                pos = 2 * pos
+            else:
+                pos = 2 * pos + 1
+        return pos - self.N
+
+    def bs_search(self, l, r, x):
+        l += self.N
+        r += self.N
+        sml, smr = -1, -1
         while l < r:
             if l & 1:
-                if self.tree[l] >= x and Lmin == -1:
-                    Lmin = l
+                if self.d[l] >= x and sml == -1:
+                    sml = l
                 l += 1
             if r & 1:
-                if self.tree[r - 1] >= x:
-                    Rmin = r - 1
+                r -= 1
+                if self.d[r] >= x:
+                    smr = r
             l >>= 1
             r >>= 1
-
-        if Lmin != -1:
-            pos = Lmin
-            while pos < self.num:
-                if self.tree[2 * pos] >= x:
-                    pos = 2 * pos
-                else:
-                    pos = 2 * pos + 1
-            return pos - self.num
-        elif Rmin != -1:
-            pos = Rmin
-            while pos < self.num:
-                if self.tree[2 * pos] >= x:
-                    pos = 2 * pos
-                else:
-                    pos = 2 * pos + 1
-            return pos - self.num
+        if sml != -1:
+            return self.__search(sml, x)
+        elif smr != -1:
+            return self.__search(smr, x)
         else:
             return -1
 
 
-import sys
-input = sys.stdin.readline
+import io
+import os
+input = io.BytesIO(os.read(0,os.fstat(0).st_size)).readline
 
 n, q = map(int, input().split())
 A = list(map(int, input().split()))
 
-seg_f = lambda x, y: max(x, y)
-ide_ele = 0
-
-st = SegmentTree(A, seg_f, ide_ele)
+st = SegmentTree(A, max, 0)
 ans = []
 
 for _ in range(q):
@@ -90,6 +84,6 @@ for _ in range(q):
     elif t == 2:
         ans.append(st.query(a - 1, b))
     elif t == 3:
-        k = st.binsearch(a - 1, n, b)
+        k = st.bs_search(a - 1, n, b)
         ans.append(n + 1 if k == -1 else k + 1)
 print("\n".join(map(str, ans)))
