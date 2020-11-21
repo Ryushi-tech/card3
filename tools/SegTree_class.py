@@ -11,7 +11,7 @@ class SegmentTree:
             self.__update(i)
 
     def __update(self, k):
-        self.d[k] = self.op(self.d[2 * k], self.d[2 * k + 1])
+        self.d[k] = self.op(self.d[k << 1], self.d[k << 1 ^ 1])
 
     def update(self, k, x):
         k += self.N
@@ -21,16 +21,16 @@ class SegmentTree:
             self.__update(k)
 
     def query(self, l, r):
+        sml, smr = self.e, self.e
         l += self.N
         r += self.N
-        sml, smr = self.e, self.e
         while l < r:
             if l & 1:
                 sml = self.op(sml, self.d[l])
                 l += 1
             if r & 1:
                 r -= 1
-                smr = self.op(self.d[r], smr)
+                smr = self.op(smr, self.d[r])
             l >>= 1
             r >>= 1
         return self.op(sml, smr)
@@ -38,16 +38,16 @@ class SegmentTree:
     def __search(self, k, x):
         pos = k
         while pos < self.N:
-            if self.d[2 * pos] >= x:
-                pos = 2 * pos
+            if self.d[pos << 1] >= x:
+                pos = pos << 1
             else:
-                pos = 2 * pos + 1
+                pos = pos << 1 ^ 1
         return pos - self.N
 
     def bs_search(self, l, r, x):
+        sml, smr = -1, -1
         l += self.N
         r += self.N
-        sml, smr = -1, -1
         while l < r:
             if l & 1:
                 if self.d[l] >= x and sml == -1:
@@ -85,5 +85,5 @@ for _ in range(q):
         ans.append(st.query(a - 1, b))
     elif t == 3:
         k = st.bs_search(a - 1, n, b)
-        ans.append(n + 1 if k == -1 else k + 1)
+        ans.append(k + 1 if k != -1 else n + 1)
 print("\n".join(map(str, ans)))
