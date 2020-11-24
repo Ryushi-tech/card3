@@ -14,7 +14,6 @@ def mod_prod(x, y):
 
 
 def bin_mod_pow(a, m):
-    # eye = [[i == j for i in range(n)] for j in range(n)]
     eye = [[0] * n for _ in range(n)]
     for i in range(n):
         for j in range(n):
