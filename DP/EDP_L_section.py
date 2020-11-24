@@ -1,5 +1,3 @@
-#https://ikatakos.com/pot/programming_algorithm/contest_history/atcoder/2019/0106_educational_dp#%E8%A7%A3%E6%B3%953
-
 n = int(input())
 a = list(map(int, input().split()))
 

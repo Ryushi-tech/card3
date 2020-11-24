@@ -1,9 +1,10 @@
 #!/bin/zsh
 
-num=183
-home=/Users/ryushi/PycharmProjects/card3/void/
+contest=ABC
+num=184
 
-base=https://atcoder.jp/contests/abc${num}/tasks/abc${num}_
+home=/Users/ryushi/PycharmProjects/card3/void/
+base=https://atcoder.jp/contests/${contest}${num}/tasks/${contest}${num}_
 
 var1=${base}a
 var2=${base}b

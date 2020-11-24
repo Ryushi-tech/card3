@@ -1,5 +1,3 @@
-# from stop_watch import stop_watch
-# @stop_watch
 def solve():
     n, m = map(int, input().split())
     h = list(map(int, input().split()))

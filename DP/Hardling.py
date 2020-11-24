@@ -1,6 +1,3 @@
-from card3.void.stop_watch import stop_watch
-
-@stop_watch
 def solve():
     n, k = map(int, input().split())
     s = set(map(int, input().split()))

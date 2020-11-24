@@ -1,28 +1,20 @@
-from itertools import permutations
-from collections import Counter
+a, b = map(int, input().split())
+c, d = map(int, input().split())
+x, y = a + b, a - b
+z, w = c + d, c - d
+mx, my = abs(a - c), abs(b - d)
 
-n, k = map(int, input().split())
-G = [[0 for _ in range(n)] for _ in range(n)]
-for i in range(n):
-    s = list(map(int, input().split()))
-    for j in range(n):
-        if i == j:
-            continue
-        else:
-            G[i][j] = s[j]
-
-ran = [a for a in range(1, n)]
-c = permutations(ran, n - 1)
-
-ans = []
-for cc in c:
-    res = 0
-    tmp = 0
-    for ccc in cc:
-        res += G[tmp][ccc]
-        tmp = ccc
-    res += G[cc[-1]][0]
-    ans.append(res)
-
-goal = Counter(ans)
-print(goal[k])
+if a == c and b == d:
+    print(0)
+elif mx + my <= 3:
+    print(1)
+elif x == z or y == w:
+    print(1)
+elif mx + my <= 6:
+    print(2)
+elif x & 1 == z & 1:
+    print(2)
+elif abs(x - z) <= 3 or abs(y - w) <= 3:
+    print(2)
+else:
+    print(3)
