@@ -25,5 +25,4 @@ b = BITM(n)
 for i, h in enumerate(H):
     x = b.query(h - 1)
     b.update(h, x + B[i])
-    print(b.BIT)
 print(b.query(n))
