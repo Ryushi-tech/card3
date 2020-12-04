@@ -1,20 +1,56 @@
-a, b = map(int, input().split())
-c, d = map(int, input().split())
-x, y = a + b, a - b
-z, w = c + d, c - d
-mx, my = abs(a - c), abs(b - d)
+n, k = map(int, input().split())
+s = [x for x in input()]
 
-if a == c and b == d:
-    print(0)
-elif mx + my <= 3:
-    print(1)
-elif x == z or y == w:
-    print(1)
-elif mx + my <= 6:
-    print(2)
-elif x & 1 == z & 1:
-    print(2)
-elif abs(x - z) <= 3 or abs(y - w) <= 3:
-    print(2)
+t = pow(2, k, n)
+
+
+def jank(a, b="Z"):
+    if b == "Z":
+        return a
+    if a == b:
+        return a
+    if a < b:
+        a, b = b, a
+    if a == "R" and b == "P":
+        return "P"
+    if a == "S" and b == "P":
+        return "S"
+    if a == "S" and b == "R":
+        return "R"
+
+
+if n >= pow(2, k):
+    m = pow(2, k)
+    s = s[:m]
+    while len(s) > 1:
+        tmp = []
+        for i in range(0, len(s), 2):
+            if i + 1 < len(s):
+                tmp.append(jank(s[i], s[i + 1]))
+            else:
+                tmp.append(jank(s[i]))
+        s = tmp
+    print(*s)
 else:
-    print(3)
+    u = s + s[:t]
+    m = len(u)
+    while len(u) > 1:
+        tmp = []
+        for i in range(0, len(u), 2):
+            if i + 1 < len(u):
+                tmp.append(jank(u[i], u[i + 1]))
+            else:
+                tmp.append(jank(u[i]))
+        u = tmp
+    while len(s) > 1:
+        tmp = []
+        for i in range(0, len(s), 2):
+            if i + 1 < len(s):
+                tmp.append(jank(s[i], s[i + 1]))
+            else:
+                tmp.append(jank(s[i]))
+        s = tmp
+    if t + n & 1:
+        print(jank(*u, *s))
+    else:
+        print(*u)

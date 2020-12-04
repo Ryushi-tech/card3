@@ -1,7 +1,7 @@
 #!/bin/zsh
 
-contest=ABC
-num=184
+contest=arc
+num=109
 
 home=/Users/ryushi/PycharmProjects/card3/void/
 base=https://atcoder.jp/contests/${contest}${num}/tasks/${contest}${num}_

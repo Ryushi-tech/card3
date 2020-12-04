@@ -5,7 +5,7 @@ def is_ok(i):
 ok = -1
 ng = 10
 while ng - ok > 1:
-    mid = (ok + ng) // 2  # 平均(小数切り捨て)
+    mid = (ok + ng) // 2
     if is_ok(mid):
         ok = mid
     else:

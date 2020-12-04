@@ -1,45 +1,53 @@
-class SegmentTree:
-    def __init__(self, arr, op, e):
-        n = len(arr)
-        self.op = op
-        self.e = e
-        self.N = 1 << (n - 1).bit_length()
-        self.d = [e] * 2 * self.N
-        for i, a in enumerate(arr):
-            self.d[self.N + i] = a
-        for i in range(self.N - 1, 0, -1):
-            self.__update(i)
+def sa_naive(s):
+    n = len(s)
+    sa = list(range(n))
+    sa.sort(key=lambda x: s[x:])
+    return sa
 
-    def __update(self, k):
-        self.d[k] = self.op(self.d[k << 1], self.d[k << 1 ^ 1])
 
-    def update(self, k, x):
-        k += self.N
-        self.d[k] = x
-        while k:
-            k >>= 1
-            self.__update(k)
+def sa_doubling(s):
+    n = len(s)
+    sa = list(range(n))
+    rnk = s
+    tmp = [0] * n
+    k = 1
+    while k < n:
+        sa.sort(key=lambda x: (rnk[x], rnk[x + k]) if x + k < n else (rnk[x], -1))
+        tmp[sa[0]] = 0
+        for i in range(1, n):
+            tmp[sa[i]] = tmp[sa[i - 1]]
+            if sa[i - 1] + k < n:
+                x = (rnk[sa[i - 1]], rnk[sa[i - 1] + k])
+            else:
+                x = (rnk[sa[i - 1]], -1)
+            if sa[i] + k < n:
+                y = (rnk[sa[i]], rnk[sa[i] + k])
+            else:
+                y = (rnk[sa[i]], -1)
 
-    def query(self, l, r):
-        sml, smr = self.e, self.e
-        l += self.N
-        r += self.N
-        while l < r:
-            if l & 1:
-                sml = self.op(sml, self.d[l])
-                l += 1
-            if r & 1:
-                r -= 1
-                smr = self.op(smr, self.d[r])
-            l >>= 1
-            r >>= 1
-        return self.op(sml, smr)
+            if x < y:
+                tmp[sa[i]] += 1
+        k *= 2
+        tmp, rnk = rnk, tmp
+
+    return sa
 
 
 def sa_is(s, upper):
     n = len(s)
     if n == 0:
         return []
+    if n == 1:
+        return [0]
+    if n == 2:
+        if s[0] < s[1]:
+            return [0, 1]
+        else:
+            return [1, 0]
+    if n < 10:
+        return sa_naive(s)
+    if n < 40:
+        return sa_doubling(s)
 
     ls = [0] * n
     for i in range(n - 2, -1, -1):
@@ -138,6 +146,7 @@ def sa_is(s, upper):
             if v >= 1 and ls[v - 1]:
                 buf[s[v - 1] + 1] -= 1
                 sa[buf[s[v - 1] + 1]] = v - 1
+
     return sa
 
 
@@ -148,51 +157,28 @@ def suffix_array(s, upper=255):
     return sa_is(s, upper)
 
 
-def upper_bound(sa, s, t):
-    l = 0
-    r = len(sa)
-    n = len(t)
-    while r - l > 1:
-        m = (l + r) // 2
-        if s[sa[m]:sa[m] + n] > t:
-            r = m
-        else:
-            l = m
-    return l if s[sa[l]:sa[l] + n] == t else -1
+def lcp_array(s, sa):
+    n = len(s)
+    rnk = [0] * n
+    for i in range(n):
+        rnk[sa[i]] = i
+    lcp = [0] * (n - 1)
+    h = 0
+    for i in range(n):
+        if h > 0:
+            h -= 1
+        if rnk[i] == 0:
+            continue
+        j = sa[rnk[i] - 1]
+        while j + h < n and i + h < n:
+            if s[j + h] != s[i + h]:
+                break
+            h += 1
+        lcp[rnk[i] - 1] = h
+    return lcp
 
 
-def lower_bound(sa, s, t):
-    l = 0
-    r = len(sa)
-    n = len(t)
-    while r - l > 1:
-        m = (l + r) // 2
-        if s[sa[m]:sa[m] + n] < t:
-            l = m
-        else:
-            r = m
-    return r if r < len(sa) and s[sa[r]:sa[r] + n] == t else -1
-
-
-import sys
-input = lambda: sys.stdin.readline()
-
-s = input().rstrip()
+s = input()
 n = len(s)
-INF = float("inf")
-sa = suffix_array(s, 128)
-sg0, sg1 = SegmentTree(sa, min, INF), SegmentTree(sa, max, -INF)
-q = int(input())
-ans = [0] * q
-for i in range(q):
-    x, y = input().split()
-    i0, i1 = lower_bound(sa, s, x), upper_bound(sa, s, x)
-    j0, j1 = lower_bound(sa, s, y), upper_bound(sa, s, y)
-    if i0 == -1 or j0 == -1:
-        continue
-    tmp = len(y) + sg1.query(j0, j1 + 1) - sg0.query(i0, i1 + 1)
-    if tmp < max(len(x), len(y)):
-        continue
-    else:
-        ans[i] = tmp
-print("\n".join(map(str, ans)))
+ans = n * (n + 1) // 2 - sum(lcp_array(s, suffix_array(s)))
+print(ans)

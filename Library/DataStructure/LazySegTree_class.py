@@ -84,7 +84,7 @@ class LazySegmentTree:
                 self.__update((r - 1) >> i)
 
     def __update(self, k):
-        self.d[k] = self.op(self.d[2 * k], self.d[2 * k + 1])
+        self.d[k] = self.op(self.d[k << 1], self.d[k << 1 ^ 1])
 
     def __all_apply(self, k, f):
         self.d[k] = self.map_f(f, self.d[k])
@@ -92,8 +92,8 @@ class LazySegmentTree:
             self.lz[k] = self.cmp_f(f, self.lz[k])
 
     def __push(self, k):
-        self.__all_apply(2 * k, self.lz[k])
-        self.__all_apply(2 * k + 1, self.lz[k])
+        self.__all_apply(k << 1, self.lz[k])
+        self.__all_apply(k << 1 ^ 1, self.lz[k])
         self.lz[k] = self._id
 
 

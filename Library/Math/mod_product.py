@@ -13,6 +13,5 @@ for i in range(1, k + 1):
         cur[j] = acc[j] * A[j] % mod
         S[i] += cur[j]
         S[i] %= mod
+    print(S, acc, cur)
     acc = cur
-
-print(S)

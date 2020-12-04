@@ -1,10 +1,19 @@
-n, x = map(int, input().split())
-s = input()
+def is_ok(i):
+    return i * (i + 1) <= 2 * (n + 1)
 
-for ss in s:
-    if ss == "o":
-        x += 1
-    else:
-        x -= 1
-        x = max(0, x)
-print(x)
+
+def solve():
+    ok = -1
+    ng = 10 ** 10
+    while ng - ok > 1:
+        mid = (ok + ng) // 2
+        if is_ok(mid):
+            ok = mid
+        else:
+            ng = mid
+
+    return n - ok + 1
+
+
+n = int(input())
+print(solve())
