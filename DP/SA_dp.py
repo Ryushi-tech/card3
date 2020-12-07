@@ -100,41 +100,39 @@ def sa_is(s, upper):
             if v >= 1 and ls[v - 1]:
                 buf[s[v - 1] + 1] -= 1
                 sa[buf[s[v - 1] + 1]] = v - 1
-
     return sa
 
 
 def suffix_array(s, upper=255):
     if type(s) is str:
-        s = s + "$"
+        # s = s + "$"
         s = [ord(c) for c in s]
     return sa_is(s, upper)
 
 
-def lcp_array(s, sa):
-    n = len(s)
-    rnk = [0] * n
-    for i in range(n):
-        rnk[sa[i]] = i
-    lcp = [0] * (n - 1)
-    h = 0
-    for i in range(n):
-        if h > 0:
-            h -= 1
-        if rnk[i] == 0:
-            continue
-        j = sa[rnk[i] - 1]
-        while j + h < n and i + h < n:
-            if s[j + h] != s[i + h]:
-                break
-            h += 1
-        lcp[rnk[i] - 1] = h
-    return lcp
-
-
 def solve():
+    k = int(input())
     s = input()
     n = len(s)
-    ans = n * (n + 1) // 2 - sum(lcp_array(s, suffix_array(s)))
-    print(ans)
-solve()
+    l = (n + k) // (k + 1)
+    sa = suffix_array(s, 128)
+    pos = {i: x for x, i in enumerate(sa)}
+    low = 0
+    high = n - 1
+    while high - low > 0:
+        mid = (high + low) // 2
+        dp = [k + 2] * (n + 1)
+        dp[0] = 0
+        for i in range(n):
+            if i + l <= n and pos[i] <= mid:
+                dp[i + l] = min(dp[i + l], dp[i] + 1)
+            if i + l - 1 <= n:
+                dp[i + l - 1] = min(dp[i + l - 1], dp[i] + 1)
+        if dp[n] <= k + 1:
+            high = mid
+        else:
+            low = mid + 1
+    return s[sa[low]:sa[low] + l]
+
+
+print(solve())
