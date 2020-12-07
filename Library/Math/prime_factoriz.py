@@ -1,5 +1,5 @@
 pf = {}
-m = 1541406720
+m = 10 ** 9 + 6
 
 for i in range(2, int(m**0.5) + 1):
     while not m % i:

@@ -17,7 +17,7 @@ class RollingHash():
 
 import sys
 input = lambda: sys.stdin.readline()
-
+from random import randint
 
 def same(l1, r1, l2, r2):
     return rh.get(l1, r1) == rh.get(l2, r2)
@@ -36,7 +36,7 @@ def diff(l1, r1, l2, r2):
     return ok < n and same(l1 + ok + 1, r1, l2 + ok + 1, r2)
 
 
-s, base, mod = input(), 1007, 10 ** 9 + 7
+s, base, mod = input(), randint(3, 998244351), 10 ** 9 + 7
 rh = RollingHash(s, base, mod)
 q = int(input())
 L, R, T = [], [], []
