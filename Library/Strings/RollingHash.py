@@ -1,15 +1,13 @@
 class RollingHash():
     def __init__(self, s, base, mod):
         self.mod = mod
-        self.pw = pw = [1] * (len(s) + 1)
         l = len(s)
-        self.h = h = [0] * (l + 1)
-        v = 0
+        self.pw = [1] * (l + 1)
+        self.h = [0] * (l + 1)
         for i in range(l):
-            h[i + 1] = v = (v * base + ord(s[i])) % mod
-        v = 1
+            self.h[i + 1] = (self.h[i] * base + ord(s[i])) % mod
         for i in range(l):
-            pw[i + 1] = v = v * base % mod
+            self.pw[i + 1] = self.pw[i] * base % mod
 
     def get(self, l, r):
         return (self.h[r] - self.h[l] * self.pw[r - l] % self.mod) % self.mod
@@ -17,9 +15,10 @@ class RollingHash():
 
 import sys
 input = lambda: sys.stdin.readline()
+from random import randint
 
 
-#  LCP
+# LCP
 def same(l1, r1, l2, r2):
     return rh.get(l1, r1) == rh.get(l2, r2)
 
@@ -37,9 +36,7 @@ def diff(l1, r1, l2, r2):
     return ok < n and same(l1 + ok + 1, r1, l2 + ok + 1, r2)
 
 
-from random import randint
-s, base, mod = input(), randint(3, 998244353), 10 ** 9 + 7
-# s, base, mod = input(), 119, 998244353
+s, base, mod = input(), randint(17, 998244351), 998244353
 rh = RollingHash(s, base, mod)
 q = int(input())
 L, R, T = [], [], []
@@ -61,20 +58,22 @@ for i in range(q):
         x = l + step * u
         for t in range(n):
             y = l + step * t
-            if cnt > 1:
-                continue
             if same(x, x + step, y, y + step):
                 cnt += 0
             elif diff(x, x + step, y, y + step):
                 cnt += 1
             else:
                 cnt += 2
+            if cnt > 1:
+                break
+        if cnt > 1:
+            continue
         if same(x, x + rem, z, r + 1):
             cnt += 0
         elif diff(x, x + rem, z, r + 1):
             cnt += 1
         else:
-            cnt += 2
+            continue
         if cnt <= 1:
             ans = True
     x = "Yes" if ans else "No"
